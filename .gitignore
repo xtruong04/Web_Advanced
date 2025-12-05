@@ -1,0 +1,28 @@
+# Ignore Visual Studio files
+.vs/
+*.user
+*.suo
+*.vscode/
+
+# Build results
+bin/
+obj/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.exe
+*.dll
+*.log
+
+# NuGet
+*.nupkg
+packages/
+
+# Others
+*.cache
+*.db
+*.opendb
+*.mdf
+*.ldf
