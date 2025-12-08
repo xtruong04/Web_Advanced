@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ClothesShop.Models;
 
 namespace ClothesShop.Data
 {
@@ -9,5 +10,6 @@ namespace ClothesShop.Data
             : base(options)
         {
         }
+        public DbSet<ClothesShop.Models.Product> Product { get; set; } = default!;
     }
 }
