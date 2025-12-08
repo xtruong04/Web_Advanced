@@ -35,6 +35,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// Route cho Areas (Admin, Identity, v.v.)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
+// Route m?c ð?nh
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
