@@ -1,0 +1,69 @@
+﻿@model ClothesShop.Models.ApplicationUser
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="profile-sidebar">
+                <h5 class="mb-3">Tài khoản</h5>
+
+                <a href="/Profile" class="active">Hồ sơ</a>
+                <a href="#">Đơn mua</a>
+                <a href="#">Đổi mật khẩu</a>
+                <a href="#">Sổ địa chỉ</a>
+                <a href="/Identity/Account/Logout">Đăng xuất</a>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="col-md-9">
+            <div class="profile-container">
+
+                <h3 class="mb-4">Hồ sơ của tôi</h3>
+                <hr />
+
+                @if (TempData["success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["success"]</div>
+                }
+
+                <form method="post" asp-action="Update" enctype="multipart/form-data">
+
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="/avatar/@Model.AvatarUrl" class="profile-avatar" />
+                        <div class="ms-3">
+                            <label class="form-label">Đổi avatar</label>
+                            <input type="file" name="AvatarUpload" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Họ và tên</label>
+                        <input class="form-control" name="FullName" value="@Model.FullName" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" value="@Model.Email" readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ</label>
+                        <input class="form-control" name="Address" value="@Model.Address" />
+                    </div>
+
+                    <button class="btn btn-save mt-3">Lưu thay đổi</button>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
