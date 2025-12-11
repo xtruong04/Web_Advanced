@@ -1,4 +1,4 @@
-﻿.auth-container {
+﻿/*.auth-container {
     width: 100%;
     background: #f5f5f5;
     display: flex;
@@ -100,7 +100,7 @@
         right: 0;
     }
 .auth-wrapper {
-    padding-top: 120px; /* đẩy nội dung xuống dưới header */
-    padding-bottom: 60px; /* thêm khoảng cách dưới */
-    background: #f8f9fa;
-}
+    padding-top: 120px;*/ /* đẩy nội dung xuống dưới header */
+    /*padding-bottom: 60px;*/ /* thêm khoảng cách dưới */
+    /*background: #f8f9fa;
+}*/
