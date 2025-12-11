@@ -1,68 +1,55 @@
 ﻿@page
 @model LoginModel
+
 @{
     ViewData["Title"] = "Đăng nhập";
-    Layout = "/Views/Shared/_Layout.cshtml"; // dùng layout chính của website
 }
 
-<!-- ================= TEMPLATE CSS (ColoShop Template) =================== -->
-<link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
-<link rel="stylesheet" href="~/assets/css/font-awesome.min.css" />
-<link rel="stylesheet" href="~/assets/css/themify-icons.css" />
-<link rel="stylesheet" href="~/assets/css/elegant-icons.css" />
-<link rel="stylesheet" href="~/assets/css/owl.carousel.min.css" />
-<link rel="stylesheet" href="~/assets/css/nice-select.css" />
-<link rel="stylesheet" href="~/assets/css/jquery-ui.min.css" />
-<link rel="stylesheet" href="~/assets/css/slicknav.min.css" />
-<link rel="stylesheet" href="~/assets/css/style.css" />
+<div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body p-4">
 
-<!-- =============== CUSTOM LOGIN PAGE CSS =============== -->
-<link rel="stylesheet" href="~/css/auth.css" />
+        <h3 class="text-center mb-2 fw-bold">@ViewData["Title"]</h3>
+        <p class="text-center text-muted mb-4">Chào mừng bạn quay lại</p>
 
-<div class="auth-wrapper">
-    <div class="auth-container">
-        <div class="auth-box">
+        <form method="post">
 
-            <h2 class="auth-title">Đăng nhập</h2>
-            <p class="auth-subtitle">Chào mừng bạn quay lại</p>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <form method="post" class="auth-form">
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" placeholder="email@example.com" />
+                <label asp-for="Input.Email"></label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
 
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" type="password" class="form-control" placeholder="••••••" />
+                <label asp-for="Input.Password"></label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
 
-                <div class="form-group mb-3">
-                    <label>Email</label>
-                    <input asp-for="Input.Email" class="form-control auth-input" placeholder="Nhập email" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <label class="d-flex align-items-center gap-2">
+                    <input asp-for="Input.RememberMe" />
+                    <span>Ghi nhớ đăng nhập</span>
+                </label>
 
-                <div class="form-group mb-3">
-                    <label>Mật khẩu</label>
-                    <input asp-for="Input.Password" class="form-control auth-input" placeholder="Mật khẩu" />
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
+                <a asp-page="./ForgotPassword" class="text-decoration-none small">Quên mật khẩu?</a>
+            </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <label class="checkbox-label">
-                        <input asp-for="Input.RememberMe" />
-                        Ghi nhớ đăng nhập
-                    </label>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3">
+                Đăng nhập
+            </button>
+        </form>
 
-                    <a asp-page="./ForgotPassword" class="auth-link">Quên mật khẩu?</a>
-                </div>
-
-                <button type="submit" class="btn auth-btn w-100">Đăng nhập</button>
-
-                <div class="auth-divider">
-                    <span>Hoặc</span>
-                </div>
-
-                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn auth-btn-outline w-100">
-                    Tạo tài khoản mới
-                </a>
-
-            </form>
+        <div class="text-center mt-4">
+            <p class="text-muted">Hoặc</p>
+            <a asp-page="./Register"
+               asp-route-returnUrl="@Model.ReturnUrl"
+               class="btn btn-outline-primary w-100 py-2 rounded-3 fw-semibold">
+                Tạo tài khoản mới
+            </a>
         </div>
+
     </div>
 </div>
 

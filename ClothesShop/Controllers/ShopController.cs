@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClothesShop.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ClothesShop.Data;
-using ClothesShop.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ClothesShop.Controllers
 {

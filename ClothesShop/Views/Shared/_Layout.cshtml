@@ -18,13 +18,14 @@
 
 <body>
     <!-- Header -->
-    <partial name="_Header" />
+    @Html.Partial("_Header")
 
     <!-- Main Body -->
     @RenderBody()
 
     <!-- Footer -->
-    <partial name="_Footer" />
+    @Html.Partial("_Footer")
+
 
 
     <script src="@Url.Content("~/Content/clientpage/assets/js/jquery-3.2.1.min.js")"></script>

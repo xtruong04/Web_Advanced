@@ -1,69 +1,111 @@
 ﻿@model ClothesShop.Models.ApplicationUser
 <link rel="stylesheet" href="~/css/profile.css" />
 
-<div class="container mt-5">
+<div class="container mt-5" style="padding-top: 120px;">
     <div class="row">
 
         <!-- Sidebar -->
-        <div class="col-md-3">
-            <div class="profile-sidebar">
-                <h5 class="mb-3">Tài khoản</h5>
-
-                <a href="/Profile" class="active">Hồ sơ</a>
-                <a href="#">Đơn mua</a>
-                <a href="#">Đổi mật khẩu</a>
-                <a href="#">Sổ địa chỉ</a>
-                <a href="/Identity/Account/Logout">Đăng xuất</a>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm rounded-4 p-3">
+                <h5 class="mb-3 fw-bold">Tài khoản</h5>
+                <div class="list-group list-group-flush">
+                    <a href="/Profile" class="list-group-item list-group-item-action active">Hồ sơ</a>
+                    <a href="#" class="list-group-item list-group-item-action">Đơn mua</a>
+                    <a href="#" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
+                    <a href="#" class="list-group-item list-group-item-action">Sổ địa chỉ</a>
+                    <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
+                </div>
             </div>
         </div>
 
         <!-- Profile Content -->
         <div class="col-md-9">
-            <div class="profile-container">
+            <div class="card shadow-sm rounded-4 p-4">
 
-                <h3 class="mb-4">Hồ sơ của tôi</h3>
+                <h3 class="mb-4 fw-bold">Hồ sơ của tôi</h3>
                 <hr />
 
                 @if (TempData["success"] != null)
                 {
-                    <div class="alert alert-success">@TempData["success"]</div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 }
 
-                <form method="post" asp-action="Update" enctype="multipart/form-data">
+                <!-- Hiển thị thông tin hồ sơ -->
+                <div class="profile-info mb-4 text-center">
+                    <!-- Avatar Image -->
+                    <label for="AvatarUpload" class="d-inline-block position-relative mb-3" style="cursor:pointer;">
+                        <img src="/avatar/@Model.AvatarUrl"
+                             class="rounded-circle border border-2"
+                             style="width:120px; height:120px; object-fit:cover;"
+                             title="Click để thay đổi avatar" />
+                        <input type="file" id="AvatarUpload" name="AvatarUpload" class="d-none" />
+                    </label>
 
-                    <div class="d-flex align-items-center mb-4">
-                        <img src="/avatar/@Model.AvatarUrl" class="profile-avatar" />
-                        <div class="ms-3">
-                            <label class="form-label">Đổi avatar</label>
-                            <input type="file" name="AvatarUpload" class="form-control" />
+                    <!-- Name & Email -->
+                    <h5 class="fw-bold mb-1">@Model.FullName</h5>
+                    <p class="text-muted mb-2"><strong>Email:</strong>@Model.Email</p>
+
+                    <!-- Phone & Address -->
+                    <p class="mb-1"><strong>Phone:</strong> @Model.PhoneNumber</p>
+                    <p class="mb-0"><strong>Address:</strong> @Model.Address</p>
+                </div>
+
+                <!-- Subheader / nút mở form cập nhật -->
+                <div class="mb-3">
+                    <button class="btn btn-outline-primary" type="button" id="toggleUpdateForm">
+                        Cập nhật hồ sơ
+                    </button>
+                </div>
+
+                <!-- Form cập nhật hồ sơ (mặc định ẩn) -->
+                <div id="updateFormContainer" style="display:none;">
+                    <form method="post" asp-page-handler="Update" enctype="multipart/form-data">
+
+                    @*     <!-- Avatar -->
+                        <div class="d-flex align-items-center mb-4">
+                            <img src="/avatar/@Model.AvatarUrl" class="rounded-circle border border-2" style="width:100px; height:100px; object-fit:cover;" />
+                            <div class="ms-3">
+                                <label class="form-label fw-semibold">Đổi avatar</label>
+                                <input type="file" name="AvatarUpload" class="form-control form-control-sm" />
+                            </div>
+                        </div> *@
+
+                        <!-- Phone Number -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Số điện thoại</label>
+                            <input class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" placeholder="Nhập số điện thoại" />
                         </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Họ và tên</label>
-                        <input class="form-control" name="FullName" value="@Model.FullName" />
-                    </div>
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Địa chỉ</label>
+                            <input class="form-control" name="Address" value="@Model.Address" placeholder="Nhập địa chỉ" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input class="form-control" value="@Model.Email" readonly />
-                    </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-3 fw-bold rounded-3">Lưu hồ sơ</button>
+                    </form>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Số điện thoại</label>
-                        <input class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Địa chỉ</label>
-                        <input class="form-control" name="Address" value="@Model.Address" />
-                    </div>
-
-                    <button class="btn btn-save mt-3">Lưu thay đổi</button>
-
-                </form>
             </div>
         </div>
 
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('toggleUpdateForm').addEventListener('click', function() {
+            var formContainer = document.getElementById('updateFormContainer');
+            if (formContainer.style.display === 'none') {
+                formContainer.style.display = 'block';
+                this.textContent = 'Đóng cập nhật hồ sơ';
+            } else {
+                formContainer.style.display = 'none';
+                this.textContent = 'Cập nhật hồ sơ';
+            }
+        });
+    </script>
+}
