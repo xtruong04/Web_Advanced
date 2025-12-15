@@ -1,41 +1,55 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Colo Shop</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="description" content="Colo Shop Template" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="@Url.Content("~/Content/clientpage/assets/styles/bootstrap4/bootstrap.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/clientpage/assets/plugins/font-awesome-4.7.0/css/font-awesome.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/clientpage/assets/plugins/OwlCarousel2-2.2.1/owl.carousel.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/clientpage/assets/plugins/OwlCarousel2-2.2.1/owl.theme.default.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/clientpage/assets/plugins/OwlCarousel2-2.2.1/animate.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/clientpage/assets/styles/main_styles.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/clientpage/assets/styles/responsive.css")" />
+<head>
+    <meta charset="utf-8">
+    <title>MultiShop - Online Shop Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="~/Content/clientpage/assets/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="~/Content/clientpage/assets/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="~/Content/clientpage/assets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/Content/clientpage/assets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
-    <!-- Header -->
+    <!-- Topbar Start -->
     @Html.Partial("_Header")
-
-    <!-- Main Body -->
+    <!-- Topbar End -->
     @RenderBody()
-
-    <!-- Footer -->
+    <!-- Footer Start -->
     @Html.Partial("_Footer")
+    <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/clientpage/assets/lib/easing/easing.min.js"></script>
+    <script src="~/Content/clientpage/assets/lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <script src="@Url.Content("~/Content/clientpage/assets/js/jquery-3.2.1.min.js")"></script>
-    <script src="@Url.Content("~/Content/clientpage/assets/styles/bootstrap4/popper.js")"></script>
-    <script src="@Url.Content("~/Content/clientpage/assets/styles/bootstrap4/bootstrap.min.js")"></script>
-    <script src="@Url.Content("~/Content/clientpage/assets/plugins/Isotope/isotope.pkgd.min.js")"></script>
-    <script src="@Url.Content("~/Content/clientpage/assets/plugins/OwlCarousel2-2.2.1/owl.carousel.js")"></script>
-    <script src="@Url.Content("~/Content/clientpage/assets/plugins/easing/easing.js")"></script>
-    <script src="@Url.Content("~/Content/clientpage/assets/js/custom.js")"></script>
+    <!-- Contact Javascript File -->
+    <script src="~/Content/clientpage/assets/mail/jqBootstrapValidation.min.js"></script>
+    <script src="~/Content/clientpage/assets/mail/contact.js"></script>
 
-    @RenderSection("Scripts", required: false)
+    <!-- Template Javascript -->
+    <script src="~/Content/clientpage/assets/js/main.js"></script>
 </body>
+
 </html>

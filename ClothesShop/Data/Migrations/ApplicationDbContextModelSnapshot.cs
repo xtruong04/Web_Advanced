@@ -129,7 +129,7 @@ namespace ClothesShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ClothesShop.Models.Product", b =>
