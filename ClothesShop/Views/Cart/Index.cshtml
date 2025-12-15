@@ -1,0 +1,49 @@
+﻿@model ClothesShop.Models.CartViewModel
+
+<h2>Giỏ hàng</h2>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Hình ảnh</th>
+			<th>Tên sản phẩm</th>
+			<th>Giá</th>
+			<th>Số lượng</th>
+			<th>Tổng</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.Items)
+		{
+			<tr>
+				<td><img src="@item.ProductImage" alt="@item.ProductName" width="50" /></td>
+				<td>@item.ProductName</td>
+				<td>@item.Price.ToString("C")</td>
+				<td>
+					<form action="@Url.Action("UpdateQuantity", "Cart")" method="post">
+						<input type="number" name="quantity" value="@item.Quantity" min="1" />
+						<input type="hidden" name="productId" value="@item.ProductId" />
+						<button type="submit" class="btn btn-primary">Cập nhật</button>
+					</form>
+				</td>
+				<td>@item.Total.ToString("C")</td>
+				<td>
+					<a href="@Url.Action("RemoveFromCart", "Cart", new { productId = item.ProductId })" class="btn btn-danger">Xóa</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<p>
+	Tổng tiền: @Model.CartTotal.ToString("C")
+</p>
+<p>
+	Phí vận chuyển: @Model.ShippingCost.ToString("C")
+</p>
+<p>
+	Tổng cộng: @Model.Total.ToString("C")
+</p>
+
+<a href="@Url.Action("ClearCart", "Cart")" class="btn btn-warning">Xóa tất cả</a>
