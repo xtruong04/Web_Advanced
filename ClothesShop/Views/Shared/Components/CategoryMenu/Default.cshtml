@@ -1,0 +1,9 @@
+﻿@model IEnumerable<ClothesShop.Models.Category>
+
+@foreach (var item in Model)
+{
+    <a href="/product-by-category-@item.Id"
+       class="dropdown-item">
+        @item.Name
+    </a>
+}

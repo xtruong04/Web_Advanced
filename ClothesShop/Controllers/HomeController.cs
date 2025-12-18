@@ -18,8 +18,8 @@ namespace ClothesShop.Controllers
         {
             try
             {
-                //List<Category> categories = new List<Category>();
-                //categories = _context.Categories.ToList();
+                List<Category> categories = new List<Category>();
+                categories = _context.Categories.ToList();
 
                 List<Product> allproducts = new List<Product>();
                 allproducts = _context.Product
@@ -31,7 +31,7 @@ namespace ClothesShop.Controllers
                     .Take(4)
                     .OrderByDescending(s => s.Id).ToList();
                 Home item = new Home();
-                //item.Categories = categories;
+                item.Categories = categories;
                 item.AllProducts = allproducts;
                 item.FeaturedProducts = featuredproducts;
                 ViewBag.CartCount = CartHelper.GetCartCount(HttpContext.Session);
