@@ -15,16 +15,58 @@ namespace ClothesShop.Controllers
         }
 
         // Trang Shop - hiển thị danh sách sản phẩm
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+    string? price,
+    List<string>? colors,
+    List<string>? sizes,
+    int? cateId
+)
         {
-            var products = await _context.Product
+            var products = _context.Product
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages)
-                .ToListAsync();
+                .Include(p => p.ProductVariants)
+                .AsQueryable();
 
-            return View(products);
+            // 🔹 Category
+            if (cateId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == cateId.Value);
+            }
+
+            // 🔹 Price
+            if (!string.IsNullOrEmpty(price))
+            {
+                var parts = price.Split('-');
+                if (parts.Length == 2)
+                {
+                    decimal min = decimal.Parse(parts[0]);
+                    decimal max = decimal.Parse(parts[1]);
+                    products = products.Where(p => p.Price >= min && p.Price <= max);
+                }
+            }
+
+            // 🔹 Color (QUAN TRỌNG)
+            if (colors != null && colors.Any())
+            {
+                products = products.Where(p =>
+                    p.ProductVariants.Any(v => colors.Contains(v.Color))
+                );
+            }
+
+            // 🔹 Size (QUAN TRỌNG)
+            if (sizes != null && sizes.Any())
+            {
+                products = products.Where(p =>
+                    p.ProductVariants.Any(v => sizes.Contains(v.Size))
+                );
+            }
+
+            return View(await products.ToListAsync());
         }
-       
+
+
+
         public ActionResult ShopDetails(int id)
         {
             var item = _context.Product
