@@ -82,9 +82,8 @@
             <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 999;">
                 <div class="navbar-nav w-100">
                     <div class="nav-item dropdown dropright">
+                        @await Component.InvokeAsync("CategoryMenu")
                     </div>
-                  <a asp-controller="Profile" asp-action="Index">
-                      </a>
                 </div>
             </nav>
         </div>
@@ -102,8 +101,8 @@
                         @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-item nav-link" })
 
                         @Html.ActionLink("Shop", "Index", "Shop", null, new { @class = "nav-item nav-link" })
-                        @Html.ActionLink("Shop Detail", "Details", "Shop", null, new { @class = "nav-item nav-link" })
-                        <div class="nav-item dropdown">
+@*                         @Html.ActionLink("Shop Detail", "ShopDetails", "Shop", null, new { @class = "nav-item nav-link" })
+ *@                        <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
                                 <a href="cart.html" class="dropdown-item">Shopping Cart</a>
