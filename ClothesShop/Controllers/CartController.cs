@@ -23,27 +23,26 @@ namespace ClothesShop.Controllers
             return PartialView();
         }
         [HttpPost]
-        public ActionResult Add(int id, string name, string image, decimal price, int quantity)
+        public IActionResult Add(int id, string name, string image, decimal price, int quantity)
         {
-            try
+            var item = new CartItem
             {
-                var item = new CartItem()
-                {
-                    ProductId = id,
-                    ProductName = name,
-                    ProductImage = image,
-                    Price = price,
-                    Quantity = quantity
-                };
-                CartHelper.AddToCart(HttpContext.Session, item);
-                return RedirectToAction("Index", "Cart");
-            }
-            catch
-            {
-                return View("Error");
-            }
+                ProductId = id,
+                ProductName = name,
+                ProductImage = image,
+                Price = price,
+                Quantity = quantity
+            };
 
+            CartHelper.AddToCart(HttpContext.Session, item);
+
+            return Json(new
+            {
+                success = true,
+                cartCount = CartHelper.GetCartCount(HttpContext.Session)
+            });
         }
+
         [HttpPost]
         public ActionResult UpdateQuantity(int productId, int quantity)
         {
