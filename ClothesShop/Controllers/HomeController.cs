@@ -3,6 +3,7 @@ using System.Diagnostics;
 using ClothesShop.Data;
 using ClothesShop.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClothesShop.Controllers
 {
@@ -18,28 +19,36 @@ namespace ClothesShop.Controllers
         {
             try
             {
-                List<Category> categories = new List<Category>();
-                categories = _context.Categories.ToList();
+                var categories = _context.Categories.ToList();
 
-                List<Product> allproducts = new List<Product>();
-                allproducts = _context.Product
+                var allproducts = _context.Product
+                    .Include(p => p.ProductImages)
+                    .Include(p => p.ProductVariants)
+                    .OrderByDescending(p => p.Id)
                     .Take(8)
-                    .OrderByDescending(s => s.Id).ToList();
+                    .ToList();
 
-                List<Product> featuredproducts = new List<Product>();
-                featuredproducts = _context.Product
+                var featuredproducts = _context.Product
+                    .Include(p => p.ProductImages)
+                    .Include(p => p.ProductVariants)
+                    .OrderByDescending(p => p.Id)
                     .Take(4)
-                    .OrderByDescending(s => s.Id).ToList();
-                Home item = new Home();
-                item.Categories = categories;
-                item.AllProducts = allproducts;
-                item.FeaturedProducts = featuredproducts;
+                    .ToList();
+
+                Home item = new Home
+                {
+                    Categories = categories,
+                    AllProducts = allproducts,
+                    FeaturedProducts = featuredproducts
+                };
+
                 ViewBag.CartCount = CartHelper.GetCartCount(HttpContext.Session);
 
                 return View(item);
             }
-            catch
+            catch (Exception ex)
             {
+                // G?i ?: log l?i ð? debug
                 return Redirect("/not-found");
             }
         }

@@ -15,12 +15,7 @@ namespace ClothesShop.Controllers
         }
 
         // Trang Shop - hiển thị danh sách sản phẩm
-        public async Task<IActionResult> Index(
-    string? price,
-    List<string>? colors,
-    List<string>? sizes,
-    int? cateId
-)
+        public async Task<IActionResult> Index(string? price,List<string>? colors,List<string>? sizes,int? cateId)
         {
             var products = _context.Product
                 .Include(p => p.Category)

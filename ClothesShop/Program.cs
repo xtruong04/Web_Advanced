@@ -1,4 +1,4 @@
-using ClothesShop.Data;
+﻿using ClothesShop.Data;
 using ClothesShop.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +38,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseSession(); // ? PH?I �?t tr�?c MapControllerRoute
+app.UseSession(); // ? PH?I đ?t trư?c MapControllerRoute
+app.UseAuthentication(); // ⭐ BẮT BUỘC
 app.UseAuthorization();
 
 // Route cho Areas (Admin, Identity, v.v.)
@@ -46,7 +47,7 @@ app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
-// Route m?c �?nh
+// Route m?c đ?nh
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

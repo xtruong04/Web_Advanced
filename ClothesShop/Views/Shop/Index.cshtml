@@ -143,14 +143,21 @@
                 </div>
                 @foreach (var item in Model)
                 {
+                    var image = item.ProductImages?.FirstOrDefault()?.ImageUrl
+                    ?? "/Content/clientpage/assets/img/no-image.png";
+
                     <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                         <div class="product-item bg-light mb-4">
                             <div class="product-img position-relative overflow-hidden">
                                 <img class="img-fluid w-100" 
-                                     src="@(item.ProductImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageUrl?? "/img/no-image.jpg")"
+                                     src="@image")"
                                      alt="@item.Name">
                                 <div class="product-action">
-                                    <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
+                                    <a class="btn btn-outline-dark btn-square"
+                                       href="javascript:void(0);"
+                                       onclick="addToCart(@item.Id, '@item.Name', '@item.ProductImages', @item.Price, 1)">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </a>
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
@@ -190,3 +197,27 @@
     </div>
 </div>
 <!-- Shop End -->
+<script type="text/javascript">
+    function addToCart(id, name, image, price, quantity) {
+        $.ajax({
+            url: '@Url.Action("Add", "Cart")',  // URL đến action "Add" của controller "Cart"
+            type: 'POST',
+            data: {
+                id: id,
+                name: name,
+                image: image,
+                price: price,
+                quantity: quantity
+            },
+            success: function(response) {
+                // Có thể cập nhật giỏ hàng hoặc thông báo thành công
+                alert("Đã thêm sản phẩm vào giỏ hàng!");
+                location.reload();  // Tải lại trang giỏ hàng sau khi thêm
+            },
+            error: function(xhr, status, error) {
+                // Hiển thị lỗi nếu có sự cố
+                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+            }
+        });
+    }
+</script>
