@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
 using Microsoft.AspNetCore.Identity;
 
 namespace ClothesShop.Models
@@ -44,9 +45,7 @@ namespace ClothesShop.Models
                 return age;
             }
         }
-
-        [MaxLength(250)]
-        public string? Address { get; set; }
+        public ICollection<Address> Addresses { get; set; } = new List<Address>();
 
         public bool IsActive { get; set; } = true;
     }

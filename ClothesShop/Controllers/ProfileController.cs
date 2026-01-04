@@ -25,49 +25,65 @@ namespace ClothesShop.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            return View(user); // View yêu cầu ApplicationUser
+            if (user == null)
+                return NotFound();
+
+            // Nếu bạn có bảng Address thì lấy địa chỉ mặc định
+            Address? defaultAddress = null;
+
+            // Tạo ViewModel
+            var vm = new ProfileViewModel
+            {
+                User = user,
+                DefaultAddress = defaultAddress
+            };
+
+            return View(vm);
         }
 
 
         // ============================
         // POST: UPDATE PROFILE
         // ============================
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(IFormFile? AvatarUpload, string FullName, string PhoneNumber, string Address)
+        [HttpGet]
+        public async Task<IActionResult> Edit()
         {
             var user = await _userManager.GetUserAsync(User);
 
-            if (user == null)
-                return NotFound();
-
-            // Cập nhật FirstName & LastName
-            if (!string.IsNullOrWhiteSpace(FullName))
+            var vm = new ProfileViewModel
             {
-                var parts = FullName.Trim().Split(' ', 2);
-                user.FirstName = parts.Length > 0 ? parts[0] : "";
-                user.LastName = parts.Length > 1 ? parts[1] : "";
-            }
+                AvatarUrl = user.AvatarUrl,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                DateOfBirth = user.DateOfBirth,
+                Email = user.Email
+            };
 
-            user.PhoneNumber = PhoneNumber;
-            user.Address = Address;
+            return View(vm);
+        }
 
-            // ============================
-            // Upload Avatar
-            // ============================
-            if (AvatarUpload != null)
+        [HttpPost]
+        public async Task<IActionResult> Edit(ProfileViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) return NotFound();
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.DateOfBirth = model.DateOfBirth;
+
+            // Upload avatar
+            if (model.AvatarFile != null)
             {
-                string folder = Path.Combine(_env.WebRootPath, "avatar");
+                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(model.AvatarFile.FileName)}";
+                string path = Path.Combine("wwwroot/avatar", fileName);
 
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
-
-                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(AvatarUpload.FileName)}";
-                string filePath = Path.Combine(folder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(path, FileMode.Create))
                 {
-                    await AvatarUpload.CopyToAsync(stream);
+                    await model.AvatarFile.CopyToAsync(stream);
                 }
 
                 user.AvatarUrl = fileName;
@@ -75,9 +91,10 @@ namespace ClothesShop.Controllers
 
             await _userManager.UpdateAsync(user);
 
-            TempData["success"] = "Cập nhật hồ sơ thành công!";
-
+            TempData["success"] = "Cập nhật thành công!";
             return RedirectToAction("Index");
         }
+
+
     }
 }

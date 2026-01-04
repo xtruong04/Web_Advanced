@@ -1,0 +1,87 @@
+﻿@model ProfileViewModel
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<div class="container mt-5" style="padding-top:120px;">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm rounded-4 p-3">
+                <h5 class="fw-bold mb-3">Tài khoản</h5>
+
+                <div class="list-group">
+                    <a href="/Profile" class="list-group-item list-group-item-action">Hồ sơ</a>
+                    <a href="/Orders" class="list-group-item list-group-item-action">Đơn mua</a>
+                    <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
+                    <a href="/AddressBook" class="list-group-item list-group-item-action">Sổ địa chỉ</a>
+                    <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card shadow-sm rounded-4 p-4">
+
+                <h3 class="fw-bold mb-4">Cập nhật hồ sơ</h3>
+                <hr />
+
+                @if (TempData["error"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["error"]</div>
+                }
+
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+
+                    <!-- Avatar -->
+                    <div class="text-center mb-4">
+                        <img src="/avatar/@Model.AvatarUrl"
+                             class="rounded-circle border"
+                             style="width:130px; height:130px; object-fit:cover;" />
+
+                        <div class="mt-2">
+                            <input type="file" name="AvatarFile" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Họ</label>
+                            <input class="form-control" name="FirstName" value="@Model.FirstName" required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tên</label>
+                            <input class="form-control" name="LastName" value="@Model.LastName" required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control"
+                                   name="DateOfBirth"
+                                   value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" />
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Email</label>
+                            <input class="form-control" value="@Model.Email" disabled />
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary fw-bold px-4 mt-3" type="submit">
+                        Lưu thay đổi
+                    </button>
+                    <a href="/Profile" class="btn btn-secondary px-4 mt-3">Hủy</a>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
