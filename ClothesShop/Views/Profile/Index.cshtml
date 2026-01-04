@@ -1,92 +1,124 @@
-﻿@model ClothesShop.Models.ApplicationUser
+﻿@model ProfileViewModel
 <link rel="stylesheet" href="~/css/profile.css" />
 
-<div class="container mt-5" style="padding-top: 120px;">
+<div class="container mt-5" style="padding-top:120px;">
     <div class="row">
 
         <!-- Sidebar -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm rounded-4 p-3">
-                <h5 class="mb-3 fw-bold">Tài khoản</h5>
+                <h5 class="fw-bold mb-3">Tài khoản</h5>
+
                 <div class="list-group list-group-flush">
                     <a href="/Profile" class="list-group-item list-group-item-action active">Hồ sơ</a>
-                    <a href="#" class="list-group-item list-group-item-action">Đơn mua</a>
-                    <a href="#" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
-                    <a href="#" class="list-group-item list-group-item-action">Sổ địa chỉ</a>
+                    <a href="/Orders" class="list-group-item list-group-item-action">Đơn mua</a>
+                    <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
+                    <a href="/AddressBook" class="list-group-item list-group-item-action">Sổ địa chỉ</a>
                     <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
                 </div>
             </div>
         </div>
 
-        <!-- Profile Content -->
+        <!-- Main Content -->
         <div class="col-md-9">
             <div class="card shadow-sm rounded-4 p-4">
 
-                <h3 class="mb-4 fw-bold">Hồ sơ của tôi</h3>
+                <h3 class="fw-bold mb-4">Hồ sơ cá nhân</h3>
                 <hr />
 
+                <!-- SUCCESS MESSAGE -->
                 @if (TempData["success"] != null)
                 {
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <div class="alert alert-success alert-dismissible fade show">
                         @TempData["success"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 }
 
-                <!-- Hiển thị thông tin hồ sơ -->
-                <div class="profile-info mb-4 text-center">
-                    <!-- Avatar Image -->
-                    <label for="AvatarUpload" class="d-inline-block position-relative mb-3" style="cursor:pointer;">
-                        <img src="/avatar/@Model.AvatarUrl"
-                             class="rounded-circle border border-2"
-                             style="width:120px; height:120px; object-fit:cover;"
-                             title="Click để thay đổi avatar" />
-                        <input type="file" id="AvatarUpload" name="AvatarUpload" class="d-none" />
-                    </label>
+                <!-- Avatar + Name -->
+                <div class="text-center mb-4">
+                    <img src="/avatar/@Model.User.AvatarUrl"
+                         class="rounded-circle border border-2"
+                         style="width:130px; height:130px; object-fit:cover;" />
 
-                    <!-- Name & Email -->
-                    <h5 class="fw-bold mb-1">@Model.FullName</h5>
-                    <p class="text-muted mb-2"><strong>Email:</strong>@Model.Email</p>
-
-                    <!-- Phone & Address -->
-                    <p class="mb-1"><strong>Phone:</strong> @Model.PhoneNumber</p>
-                    <p class="mb-0"><strong>Address:</strong> @Model.Address</p>
+                    <h4 class="fw-bold mt-3">@Model.User.FullName</h4>
+                    <p class="text-muted">(@Model.User.UserName)</p>
                 </div>
 
-                <!-- Subheader / nút mở form cập nhật -->
-                <div class="mb-3">
-                    <button class="btn btn-outline-primary" type="button" id="toggleUpdateForm">
-                        Cập nhật hồ sơ
-                    </button>
-                </div>
 
-                <!-- Form cập nhật hồ sơ (mặc định ẩn) -->
-                <div id="updateFormContainer" style="display:none;">
-                    <form method="post" asp-page-handler="Update" enctype="multipart/form-data">
+                <!-- Thông tin tài khoản -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3">Thông tin cá nhân</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted">Họ</label>
+                            <div class="fw-semibold">@Model.User.FirstName</div>
+                        </div>
 
-                    @*     <!-- Avatar -->
-                        <div class="d-flex align-items-center mb-4">
-                            <img src="/avatar/@Model.AvatarUrl" class="rounded-circle border border-2" style="width:100px; height:100px; object-fit:cover;" />
-                            <div class="ms-3">
-                                <label class="form-label fw-semibold">Đổi avatar</label>
-                                <input type="file" name="AvatarUpload" class="form-control form-control-sm" />
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted">Tên</label>
+                            <div class="fw-semibold">@Model.User.LastName</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted">Ngày sinh</label>
+                            <div class="fw-semibold">
+                                @(Model.User.DateOfBirth?.ToString("dd/MM/yyyy")?? "—")
                             </div>
-                        </div> *@
-
-                        <!-- Phone Number -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Số điện thoại</label>
-                            <input class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" placeholder="Nhập số điện thoại" />
                         </div>
 
-                        <!-- Address -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Địa chỉ</label>
-                            <input class="form-control" name="Address" value="@Model.Address" placeholder="Nhập địa chỉ" />
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted">Tuổi</label>
+                            <div class="fw-semibold">
+                                @(Model.User.Age?.ToString() ?? "—")
+                            </div>
                         </div>
+                    </div>
+                </div>
 
-                        <button type="submit" class="btn btn-primary w-100 mt-3 fw-bold rounded-3">Lưu hồ sơ</button>
-                    </form>
+
+                <!-- Thông tin liên hệ -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3">Thông tin liên hệ</h5>
+
+                    <div class="mb-3">
+                        <label class="text-muted">Email</label>
+                        <div class="fw-semibold">@Model.User.Email</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="text-muted">Số điện thoại</label>
+                        <div class="fw-semibold">@(Model.User.PhoneNumber ?? "—")</div>
+                    </div>
+                </div>
+
+
+                <!-- Địa chỉ mặc định -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3">Địa chỉ mặc định</h5>
+
+                    @if (Model.DefaultAddress != null)
+                    {
+                        <div class="border rounded-3 p-3 bg-light">
+                            <div class="fw-semibold">@Model.DefaultAddress.Street</div>
+                            <div>@Model.DefaultAddress.Ward, @Model.DefaultAddress.District, @Model.DefaultAddress.City</div>
+                            <div class="text-muted small mt-1">SĐT: @Model.User.PhoneNumber</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Chưa có địa chỉ mặc định</p>
+                    }
+
+                    <a href="/AddressBook" class="btn btn-outline-primary btn-sm mt-3">
+                        Quản lý sổ địa chỉ
+                    </a>
+                </div>
+
+
+                <!-- Update Button -->
+                <div class="text-end mt-4">
+                    <a href="/Profile/Edit" class="btn btn-primary px-4 fw-bold">Cập nhật hồ sơ</a>
                 </div>
 
             </div>
@@ -94,18 +126,3 @@
 
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        document.getElementById('toggleUpdateForm').addEventListener('click', function() {
-            var formContainer = document.getElementById('updateFormContainer');
-            if (formContainer.style.display === 'none') {
-                formContainer.style.display = 'block';
-                this.textContent = 'Đóng cập nhật hồ sơ';
-            } else {
-                formContainer.style.display = 'none';
-                this.textContent = 'Cập nhật hồ sơ';
-            }
-        });
-    </script>
-}
