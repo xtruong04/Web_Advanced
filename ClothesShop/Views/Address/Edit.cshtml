@@ -1,0 +1,133 @@
+﻿@model ClothesShop.Models.Address
+
+<div class="container mt-5" style="padding-top:120px;">
+    <div class="card shadow-sm rounded-4 p-4">
+
+        <h4 class="fw-bold mb-4">Chỉnh sửa địa chỉ</h4>
+
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="IsDefault" />
+
+            <!-- Họ tên -->
+            <div class="mb-3">
+                <label class="form-label">Họ và tên</label>
+                <input class="form-control" value="@Model.FullName" readonly />
+            </div>
+
+            <!-- SĐT -->
+            <div class="mb-3">
+                <label class="form-label">Số điện thoại</label>
+                <input class="form-control" value="@Model.PhoneNumber" readonly />
+            </div>
+
+            <!-- Tỉnh -->
+            <div class="mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <select asp-for="City" class="form-control" id="city">
+                    <option value="">-- Chọn tỉnh/thành --</option>
+                </select>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+
+            <!-- Huyện -->
+            <div class="mb-3">
+                <label asp-for="District" class="form-label"></label>
+                <select asp-for="District" class="form-control" id="district" disabled>
+                    <option value="">-- Chọn quận/huyện --</option>
+                </select>
+            </div>
+
+            <!-- Xã -->
+            <div class="mb-3">
+                <label asp-for="Ward" class="form-label"></label>
+                <select asp-for="Ward" class="form-control" id="ward" disabled>
+                    <option value="">-- Chọn phường/xã --</option>
+                </select>
+            </div>
+
+            <!-- Đường -->
+            <div class="mb-3">
+                <label asp-for="Street" class="form-label"></label>
+                <input asp-for="Street" class="form-control" />
+                <span asp-validation-for="Street" class="text-danger"></span>
+            </div>
+
+            <button class="btn btn-primary px-4" type="submit">Cập nhật</button>
+            <a asp-action="Index" class="btn btn-light">Hủy</a>
+        </form>
+    </div>
+</div>
+<script>
+    const cityValue = "@Model.City";
+    const districtValue = "@Model.District";
+    const wardValue = "@Model.Ward";
+
+    const city = document.getElementById("city");
+    const district = document.getElementById("district");
+    const ward = document.getElementById("ward");
+
+    // Load tỉnh
+    fetch("https://provinces.open-api.vn/api/p/")
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(p => {
+                city.innerHTML +=
+                    `<option value="${p.name}" data-code="${p.code}">
+                        ${p.name}
+                    </option>`;
+            });
+
+            city.value = cityValue;
+            loadDistrict();
+        });
+
+    function loadDistrict() {
+        const code = city.options[city.selectedIndex]?.dataset.code;
+        if (!code) return;
+
+        fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
+            .then(res => res.json())
+            .then(data => {
+                district.disabled = false;
+                district.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+
+                data.districts.forEach(d => {
+                    district.innerHTML +=
+                        `<option value="${d.name}" data-code="${d.code}">
+                            ${d.name}
+                        </option>`;
+                });
+
+                district.value = districtValue;
+                loadWard();
+            });
+    }
+
+    function loadWard() {
+        const code = district.options[district.selectedIndex]?.dataset.code;
+        if (!code) return;
+
+        fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
+            .then(res => res.json())
+            .then(data => {
+                ward.disabled = false;
+                ward.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+
+                data.wards.forEach(w => {
+                    ward.innerHTML +=
+                        `<option value="${w.name}">
+                            ${w.name}
+                        </option>`;
+                });
+
+                ward.value = wardValue;
+            });
+    }
+
+    city.addEventListener("change", loadDistrict);
+    district.addEventListener("change", loadWard);
+</script>

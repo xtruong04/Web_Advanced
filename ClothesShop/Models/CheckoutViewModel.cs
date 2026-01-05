@@ -4,6 +4,6 @@
     {
         public CartViewModel Cart { get; set; }
         public ApplicationUser User { get; set; }
-        public Address? Address { get; set; }
+        public Address Address { get; set; }
     }
 }
