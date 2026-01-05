@@ -13,6 +13,7 @@ namespace ClothesShop.Data
         public DbSet<ClothesShop.Models.Product> Product { get; set; } = default!;
         public DbSet<ClothesShop.Models.Category> Categories { get; set; } = default!;
         public DbSet<Address> Addresses { get; set; }
-
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }    
     }
 }

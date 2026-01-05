@@ -16,11 +16,11 @@ namespace ClothesShop.Models
         [Key]
         public int Id { get; set; }
         public int LogId { get; set; }
-        public int ProductVariantId { get; set; }
-        public ProductVariant? ProductVariant { get; set; }
+        public int ProductId { get; set; }
+        public Product? Product { get; set; }
         public ChangeLogType ChangeType { get; set; }
         public int QuantityChanged { get; set; }
-        public DateTime ChangeDate { get; set; }
+        public DateTime ChangeDate { get; set; } = DateTime.Now;
         public string Notes { get; set; } = string.Empty;
     }
 }

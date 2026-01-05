@@ -7,48 +7,109 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class CheckoutController : Controller
+namespace ClothesShop.Controllers
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ApplicationDbContext _db;
-
-    public CheckoutController(UserManager<ApplicationUser> userManager,ApplicationDbContext db)
+    public class CheckoutController : Controller
     {
-        _userManager = userManager;
-        _db = db;
-    }
-    [Authorize]
-    public async Task<IActionResult> Index()
-    {
-        // USER
-        var currentUser = await _userManager.GetUserAsync(User);
-        if (currentUser == null)
-            return RedirectToAction("Login", "Account");
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _db;
 
-        // CART
-        var cart = CartHelper.GetCart(HttpContext.Session);
-
-        var cartVM = new CartViewModel
+        public CheckoutController(UserManager<ApplicationUser> userManager, ApplicationDbContext db)
         {
-            Items = cart,
-            CartTotal = cart.Sum(c => c.Total),
-            ShippingCost = 10
-        };
+            _userManager = userManager;
+            _db = db;
+        }
 
-        // DEFAULT ADDRESS
-        var defaultAddress = await _db.Addresses
-            .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.UserId == currentUser.Id && a.IsDefault);
-
-        // VIEWMODEL
-        var vm = new CheckoutViewModel
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
-            Cart = cartVM,
-            User = currentUser,
-            Address = defaultAddress
-        };
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Account");
 
-        return View(vm);
+            var cart = CartHelper.GetCart(HttpContext.Session) ?? new List<CartItem>();
+
+            var cartVM = new CartViewModel
+            {
+                Items = cart,
+                CartTotal = cart.Sum(c => c.Total),
+                ShippingCost = 10
+            };
+
+            var defaultAddress = await _db.Addresses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.UserId == user.Id && a.IsDefault);
+
+            var vm = new CheckoutViewModel
+            {
+                Cart = cartVM,
+                User = user,
+                Address = defaultAddress ?? new Address()
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PlaceOrder(CheckoutViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var cart = CartHelper.GetCart(HttpContext.Session) ?? new List<CartItem>();
+
+            if (!cart.Any())
+            {
+                ModelState.AddModelError("", "Your cart is empty!");
+                return View("Index", model);
+            }
+
+            var address = model.Address ?? new Address();
+
+            var order = new Order
+            {
+                UserId = user.Id,
+                OrderDate = DateTime.Now,
+                TotalAmount = cart.Sum(c => c.Total),
+                FullName = $"{user.FirstName} {user.LastName}",
+                PhoneNumber = user.PhoneNumber,
+                Street = address.Street ?? "",
+                Ward = address.Ward ?? "",
+                District = address.District ?? "",
+                City = address.City ?? "",
+                orderStatus = Order.OrderStatus.Pending,
+                paymentStatus = Order.PaymentStatus.Unpaid,
+                OrderItems = cart.Select(c => new OrderItem
+                {
+                    ProductId = c.ProductId,
+                    ProductName = c.ProductName,
+                    Quantity = c.Quantity,
+                    PriceAtPurchase = c.Price
+                }).ToList()
+            };
+
+            _db.Orders.Add(order);
+            await _db.SaveChangesAsync();
+
+            // Clear cart session
+            CartHelper.ClearCart(HttpContext.Session);
+
+            // Redirect to Success page with order Id
+            return RedirectToAction("Success", new { id = order.Id });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Success(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            var order = await _db.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+
+            if (order == null)
+                return NotFound();
+
+            return View(order); // view Success.cshtml
+        }
     }
-
 }

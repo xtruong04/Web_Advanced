@@ -1,0 +1,38 @@
+﻿@model ClothesShop.Models.Order
+
+<div class="container mt-5">
+    <h2>Thank you for your order!</h2>
+    <p>Order #@Model.Id placed successfully.</p>
+
+    <h4>Order Details</h4>
+    <ul>
+        <li>Full Name: @Model.FullName</li>
+        <li>Phone: @Model.PhoneNumber</li>
+        <li>Address: @Model.Street, @Model.Ward, @Model.District, @Model.City</li>
+        <li>Order Date: @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</li>
+        <li>Total Amount: $@Model.TotalAmount</li>
+        <li>Order Status: @Model.orderStatus</li>
+        <li>Payment Status: @Model.paymentStatus</li>
+    </ul>
+
+    <h4>Products</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>$@item.PriceAtPurchase</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
