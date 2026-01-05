@@ -64,7 +64,7 @@
                     clita ea. Sanc ipsum et, labore clita lorem magna duo dolor no sea
                     Nonumy
                 </p>
-                <div class="d-flex mb-3">
+                @* <div class="d-flex mb-3">
                     <strong class="text-dark mr-3">Sizes:</strong>
                     <form>
                         <div class="custom-control custom-radio custom-control-inline">
@@ -113,7 +113,7 @@
                             <label class="custom-control-label" for="color-5">Green</label>
                         </div>
                     </form>
-                </div>
+                </div> *@
                 <div class="d-flex align-items-center mb-4 pt-2">
                     <div class="input-group quantity mr-3" style="width: 130px;">
                         <div class="input-group-btn">
@@ -128,10 +128,12 @@
                             </button>
                         </div>
                     </div>
-                    <button class="btn btn-primary px-3">
-                        <i class="fa fa-shopping-cart mr-1"></i> Add To
-                        Cart
-                    </button>
+                    <a class="btn btn-outline-dark btn-square bg-secondary"
+                       href="javascript:void(0);"
+                       onclick="addToCart(@Model.Id, '@Model.Name', '@Model.ProductImages', @Model.Price, 1)">
+                        <i class="fa fa-shopping-cart"></i>
+                    </a>
+
                 </div>
                 <div class="d-flex pt-2">
                     <strong class="text-dark mr-2">Share on:</strong>
@@ -269,5 +271,27 @@
 <script>
     $("#products").load("/Shop/GetProductByCate?proId=@Model.Id&cateId=@Model.CategoryId");
 </script>
-
-<!-- Products End -->
+<script type="text/javascript">
+    function addToCart(id, name, image, price, quantity) {
+        $.ajax({
+            url: '@Url.Action("Add", "Cart")',  // URL đến action "Add" của controller "Cart"
+            type: 'POST',
+            data: {
+                id: id,
+                name: name,
+                image: image,
+                price: price,
+                quantity: quantity
+            },
+            success: function(response) {
+                // Có thể cập nhật giỏ hàng hoặc thông báo thành công
+                alert("Đã thêm sản phẩm vào giỏ hàng!");
+                location.reload();  // Tải lại trang giỏ hàng sau khi thêm
+            },
+            error: function(xhr, status, error) {
+                // Hiển thị lỗi nếu có sự cố
+                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+            }
+        });
+    }
+</script>

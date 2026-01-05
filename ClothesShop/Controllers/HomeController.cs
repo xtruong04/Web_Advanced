@@ -21,34 +21,31 @@ namespace ClothesShop.Controllers
             {
                 var categories = _context.Categories.ToList();
 
-                var allproducts = _context.Product
+                var allProducts = _context.Product
                     .Include(p => p.ProductImages)
-                    .Include(p => p.ProductVariants)
                     .OrderByDescending(p => p.Id)
                     .Take(8)
                     .ToList();
 
-                var featuredproducts = _context.Product
+                var featuredProducts = _context.Product
                     .Include(p => p.ProductImages)
-                    .Include(p => p.ProductVariants)
                     .OrderByDescending(p => p.Id)
                     .Take(4)
                     .ToList();
 
-                Home item = new Home
+                var model = new Home
                 {
                     Categories = categories,
-                    AllProducts = allproducts,
-                    FeaturedProducts = featuredproducts
+                    AllProducts = allProducts,
+                    FeaturedProducts = featuredProducts
                 };
 
                 ViewBag.CartCount = CartHelper.GetCartCount(HttpContext.Session);
 
-                return View(item);
+                return View(model);
             }
-            catch (Exception ex)
+            catch
             {
-                // G?i ?: log l?i ð? debug
                 return Redirect("/not-found");
             }
         }
