@@ -50,28 +50,25 @@
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label>Address</label>
-                        <input class="form-control" type="text"
-                               value="@Model.User?.Addresses.FirstOrDefault()" placeholder="123 Street">
+                        <label asp-for="Address.Street"></label>
+                        <input asp-for="Address.Street" class="form-control" disabled />
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label>Ward</label>
-                        <input class="form-control" type="text"
-                               value="@Model.Address?.Ward" placeholder="New York">
+                        <label asp-for="Address.Ward"></label>
+                        <input asp-for="Address.Ward" class="form-control" disabled />
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label>Dicstrict</label>
-                        <input class="form-control" type="text"
-                               value="@Model.Address?.District" placeholder="123">
+                        <label asp-for="Address.District"></label>
+                        <input asp-for="Address.District" class="form-control" disabled />
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label>City</label>
-                        <input class="form-control" type="text"
-                               value="@Model.Address?.City" placeholder="New York">
+                        <label asp-for="Address.City"></label>
+                        <input asp-for="Address.City" class="form-control" disabled />
                     </div>
+
 
                     @* <div class="col-md-12 form-group">
                         <div class="custom-control custom-checkbox">
@@ -90,6 +87,9 @@
                             </label>
                         </div>
                     </div> *@
+                    <a href="/Address" class="btn btn-outline-primary btn-sm mt-3">
+                        Quản lý sổ địa chỉ
+                    </a>
                 </div>
             </div>
 

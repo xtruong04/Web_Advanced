@@ -1,7 +1,9 @@
-﻿using ClothesShop.Models;
+﻿using ClothesShop.Data;
+using ClothesShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClothesShop.Controllers
 {
@@ -9,12 +11,14 @@ namespace ClothesShop.Controllers
     public class ProfileController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
 
-        public ProfileController(UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
+        public ProfileController(UserManager<ApplicationUser> userManager, IWebHostEnvironment env, ApplicationDbContext context)
         {
             _userManager = userManager;
             _env = env;
+            _context = context;
         }
 
         // ============================
@@ -29,7 +33,9 @@ namespace ClothesShop.Controllers
                 return NotFound();
 
             // Nếu bạn có bảng Address thì lấy địa chỉ mặc định
-            Address? defaultAddress = null;
+            var defaultAddress = await _context.Addresses
+                .Where(a => a.UserId == user.Id && a.IsDefault)
+                .FirstOrDefaultAsync();
 
             // Tạo ViewModel
             var vm = new ProfileViewModel

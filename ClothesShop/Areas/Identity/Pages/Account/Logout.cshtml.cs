@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ClothesShop.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class LogoutModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -28,16 +29,14 @@ namespace ClothesShop.Areas.Identity.Pages.Account
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            if (returnUrl != null)
+            TempData["LogoutSuccess"] = "Đăng xuất thành công";
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
-                return LocalRedirect(returnUrl);
+                return Redirect(returnUrl);
             }
-            else
-            {
-                // This needs to be a redirect so that the browser performs a new
-                // request and the identity for the user gets updated.
-                return RedirectToPage();
-            }
+
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
     }
 }

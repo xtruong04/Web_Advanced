@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ClothesShop.Models
 {
@@ -7,7 +9,9 @@ namespace ClothesShop.Models
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty; // Added missing semicolon  
+
+        [ForeignKey(nameof(UserId))] // Correct usage of ForeignKey attribute  
         public ApplicationUser User { get; set; }
 
         [Required, MaxLength(150)]
