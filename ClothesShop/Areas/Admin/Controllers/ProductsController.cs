@@ -1,145 +1,172 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ClothesShop.Data;
+using ClothesShop.Models;
+using ClothesShop.Areas.Admin.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ClothesShop.Data;
-using ClothesShop.Models;
 
 namespace ClothesShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class ProductsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _db;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext db)
         {
-            _context = context;
+            _db = db;
         }
 
         // GET: Admin/Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Product.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
+            var products = await _db.Product
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Select(p => new ProductViewModel // Chuyển đổi sang ViewModel tại đây
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Description = p.Description,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category != null ? p.Category.Name : "N/A", // Hiện tên thay vì ID
+                    ProductImageIds = p.ProductImages.Select(pi => pi.Id).ToList()
+                })
+                .ToListAsync();
+
+            return View(products); // Bây giờ List đã khớp với @model trong View
         }
 
         // GET: Admin/Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product
+            var product = await _db.Product
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            return View(product);
+            if (product == null) return NotFound();
+
+            // Map dữ liệu từ Model sang ViewModel
+            var vm = new ProductViewModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                CategoryId = product.CategoryId,
+                CategoryName = product.Category?.Name,
+                ProductImageIds = product.ProductImages.Select(pi => pi.Id).ToList()
+            };
+
+            return View(vm); // Khớp với @model ProductViewModel trong trang Details.cshtml
         }
 
         // GET: Admin/Products/Create
-        public IActionResult Create()
+        // GET: Admin/Products/Create
+        public async Task<IActionResult> Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Set<Category>(), "Id", "Id");
-            return View();
+            await PopulateCategoriesDropDown();
+            return View(new ProductViewModel());
         }
+
 
         // POST: Admin/Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Admin/Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,CategoryId")] Product product)
+        public async Task<IActionResult> Create(ProductViewModel vm)
         {
-            if (ModelState.IsValid)
+            // ❗ DEBUG CHẮC CHẮN
+            if (!ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // 🔥 BẮT BUỘC: truyền selectedValue
+                await PopulateCategoriesDropDown(vm.CategoryId);
+                return View(vm);
             }
-            ViewData["CategoryId"] = new SelectList(_context.Set<Category>(), "Id", "Id", product.CategoryId);
-            return View(product);
+
+            var product = new Product
+            {
+                Name = vm.Name!,
+                Description = vm.Description!,
+                Price = vm.Price!.Value,
+                CategoryId = vm.CategoryId!.Value
+            };
+
+            _db.Product.Add(product);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Admin/Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
+        // GET: Admin/Products/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            var product = await _db.Product
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null) return NotFound();
+
+            var vm = new ProductViewModel
             {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Set<Category>(), "Id", "Id", product.CategoryId);
-            return View(product);
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                CategoryId = product.CategoryId,
+                ProductImageIds = product.ProductImages.Select(pi => pi.Id).ToList()
+            };
+
+            await PopulateCategoriesDropDown();
+            return View(vm);
         }
 
         // POST: Admin/Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,CategoryId")] Product product)
+        public async Task<IActionResult> Edit(ProductViewModel vm)
         {
-            if (id != product.Id)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                await PopulateCategoriesDropDown();
+                return View(vm);
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Set<Category>(), "Id", "Id", product.CategoryId);
-            return View(product);
+            var product = await _db.Product.FindAsync(vm.Id);
+            if (product == null) return NotFound();
+
+            product.Name = vm.Name;
+            product.Description = vm.Description;
+            product.Price = vm.Price.Value;
+            product.CategoryId = vm.CategoryId.Value;
+
+            _db.Product.Update(product);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Admin/Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product
+            var product = await _db.Product
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            return View(product);
+            if (product == null) return NotFound();
+
+            var vm = new ProductViewModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                CategoryName = product.Category?.Name,
+                Price = product.Price
+            };
+
+            return View(vm);
         }
 
         // POST: Admin/Products/Delete/5
@@ -147,19 +174,42 @@ namespace ClothesShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
+            var product = await _db.Product.FindAsync(id);
             if (product != null)
             {
-                _context.Product.Remove(product);
+                _db.Product.Remove(product);
+                await _db.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        // GET: Admin/Products/GetProductsByCategory (JSON endpoint)
+        [HttpGet]
+        public async Task<JsonResult> GetProductsByCategory(int categoryId)
         {
-            return _context.Product.Any(e => e.Id == id);
+            var products = await _db.Product
+                .Where(p => p.CategoryId == categoryId)
+                .Select(p => new { p.Id, p.Name })
+                .ToListAsync();
+
+            return Json(products);
         }
+
+        // Private helper to populate category dropdown
+        private async Task PopulateCategoriesDropDown(int? selectedCategoryId = null)
+        {
+            var categories = await _db.Categories
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+
+            ViewBag.CategoryList = new SelectList(
+                categories,
+                "Id",
+                "Name",
+                selectedCategoryId
+            );
+        }
+
     }
 }

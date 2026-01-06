@@ -1,114 +1,155 @@
-﻿<!DOCTYPE html>
+﻿@* /Areas/Admin/Views/Shared/_Layout.cshtml *@
+<!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
-    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-          name="viewport" />
-    <link rel="icon"
-          href="assets/img/kaiadmin/favicon.ico"
-          type="image/x-icon" />
+    <title>ClothesShop Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
-    <!-- Fonts and icons -->
-    <script src="assets/js/plugin/webfont/webfont.min.js"></script>
+    <link rel="icon" href="@Url.Content("~/Content/admin/assets/img/kaiadmin/favicon.ico")" type="image/x-icon" />
+
+    <!-- Fonts and Icons -->
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/webfont/webfont.min.js")"></script>
     <script>
         WebFont.load({
-          google: { families: ["Public Sans:300,400,500,600,700"] },
-          custom: {
-            families: [
-              "Font Awesome 5 Solid",
-              "Font Awesome 5 Regular",
-              "Font Awesome 5 Brands",
-              "simple-line-icons",
-            ],
-            urls: ["assets/css/fonts.min.css"],
-          },
-          active: function () {
-            sessionStorage.fonts = true;
-          },
+            google: { families: ["Public Sans:300,400,500,600,700"] },
+            custom: {
+                families: ["Font Awesome 5 Solid","Font Awesome 5 Regular","Font Awesome 5 Brands","simple-line-icons"],
+                urls: ["@Url.Content("~/Content/admin/assets/css/fonts.min.css")"]
+            },
+            active: function () { sessionStorage.fonts = true; }
         });
     </script>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="assets/css/plugins.min.css" />
-    <link rel="stylesheet" href="assets/css/kaiadmin.min.css" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/admin/assets/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/admin/assets/css/plugins.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/admin/assets/css/kaiadmin.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/admin/assets/css/demo.css")" />
 
-    <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link rel="stylesheet" href="assets/css/demo.css" />
+    <style>
+        /* Fix content padding để header không đè lên */
+        .main-panel {
+            margin-left: 250px; /* width sidebar */
+            transition: all 0.3s;
+        }
+
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 250px; /* offset bằng sidebar width */
+            width: calc(100% - 250px);
+            z-index: 1030;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 250px;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1020;
+        }
+
+        .content {
+            padding-top: 80px; /* chiều cao header */
+            padding-left: 20px;
+            padding-right: 20px;
+            min-height: calc(100vh - 70px); /* trừ footer */
+        }
+
+        @@media (max-width: 991px) {
+            .main-panel
+
+        {
+            margin-left: 0;
+        }
+
+        .main-header {
+            left: 0;
+            width: 100%;
+        }
+
+        .sidebar {
+            left: -250px; /* ẩn sidebar trên mobile */
+        }
+
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
-    <partial name="_Header" />
+    @await Html.PartialAsync("_Header")
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-style-2">
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <ul class="nav nav-primary">
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","Dashboard", new { area="Admin" })">
+                            <i class="fas fa-home"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","Products", new { area="Admin" })">
+                            <i class="fas fa-box"></i>
+                            <p>Products</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","Orders", new { area="Admin" })">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Orders</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","Categories", new { area="Admin" })">
+                            <i class="fas fa-users"></i>
+                            <p>Category</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","ProductImages", new { area="Admin" })">
+                            <i class="fas fa-users"></i>
+                            <p>Product Image</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","Users", new { area="Admin" })">
+                            <i class="fas fa-users"></i>
+                            <p>Customers</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
 
-    <!-- Main Body -->
-    @RenderBody()
+    <!-- Main Content -->
+    <main class="main-panel">
+        <div class="content">
+            @RenderBody()
+        </div>
+    </main>
 
     <!-- Footer -->
-    <partial name="_Footer" />
-<!--   Core JS Files   -->
-<script src="assets/js/core/jquery-3.7.1.min.js"></script>
-<script src="assets/js/core/popper.min.js"></script>
-<script src="assets/js/core/bootstrap.min.js"></script>
+    @await Html.PartialAsync("_Footer")
 
-<!-- jQuery Scrollbar -->
-<script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <!-- Core JS -->
+    <script src="@Url.Content("~/Content/admin/assets/js/core/jquery-3.7.1.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/core/popper.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/core/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/chart.js/chart.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/chart-circle/circles.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/datatables/datatables.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/plugin/sweetalert/sweetalert.min.js")"></script>
+    <script src="@Url.Content("~/Content/admin/assets/js/kaiadmin.min.js")"></script>
 
-<!-- Chart JS -->
-<script src="assets/js/plugin/chart.js/chart.min.js"></script>
-
-<!-- jQuery Sparkline -->
-<script src="assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
-
-<!-- Chart Circle -->
-<script src="assets/js/plugin/chart-circle/circles.min.js"></script>
-
-<!-- Datatables -->
-<script src="assets/js/plugin/datatables/datatables.min.js"></script>
-
-<!-- Bootstrap Notify -->
-<script src="assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
-
-<!-- jQuery Vector Maps -->
-<script src="assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
-<script src="assets/js/plugin/jsvectormap/world.js"></script>
-
-<!-- Sweet Alert -->
-<script src="assets/js/plugin/sweetalert/sweetalert.min.js"></script>
-
-<!-- Kaiadmin JS -->
-<script src="assets/js/kaiadmin.min.js"></script>
-
-<!-- Kaiadmin DEMO methods, don't include it in your project! -->
-<script src="assets/js/setting-demo.js"></script>
-<script src="assets/js/demo.js"></script>
-<script>
-    $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-      type: "line",
-      height: "70",
-      width: "100%",
-      lineWidth: "2",
-      lineColor: "#177dff",
-      fillColor: "rgba(23, 125, 255, 0.14)",
-    });
-
-    $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-      type: "line",
-      height: "70",
-      width: "100%",
-      lineWidth: "2",
-      lineColor: "#f3545d",
-      fillColor: "rgba(243, 84, 93, .14)",
-    });
-
-    $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-      type: "line",
-      height: "70",
-      width: "100%",
-      lineWidth: "2",
-      lineColor: "#ffa534",
-      fillColor: "rgba(255, 165, 52, .14)",
-    });
-</script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

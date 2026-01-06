@@ -1,0 +1,59 @@
+﻿@model ClothesShop.Areas.Admin.Models.ViewModel.CategoryViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm rounded-4">
+        <div class="card-header">
+            <h3 class="fw-bold">Create Category</h3>
+        </div>
+
+        <div class="card-body">
+            <form asp-area="Admin"
+                  asp-controller="Categories"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                @* Hiển thị lỗi tổng quát (nếu có) *@
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    @* Không cần viết name="Name", asp-for sẽ tự sinh ra *@
+                    <input name="Name" asp-for="Name" class="form-control" placeholder="Nhập tên danh mục..." />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    @* Sửa lỗi chính tả "Decription" trong code cũ của bạn thành "Description" *@
+                    <textarea name="Description" asp-for="Description" class="form-control" rows="3" placeholder="Nhập mô tả chi tiết..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                    <a asp-area="Admin"
+                       asp-controller="Categories"
+                       asp-action="Index"
+                       class="btn btn-secondary px-4">
+                        Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        // Thêm thư viện validation của Jquery để kiểm tra lỗi ngay tại máy khách (Client-side)
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

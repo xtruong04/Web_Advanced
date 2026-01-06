@@ -1,0 +1,56 @@
+﻿@model ClothesShop.Areas.Admin.Models.ViewModel.CategoryViewModel
+
+@{
+    ViewData["Title"] = "Category Details";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-info text-white">
+            <h3 class="fw-bold mb-0">Category Details</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-sm-3 fw-bold text-secondary">
+                    @Html.DisplayNameFor(model => model.Name)
+                </div>
+                <div class="col-sm-9">
+                    <span class="badge bg-primary fs-6">@Html.DisplayFor(model => model.Name)</span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-sm-3 fw-bold text-secondary">
+                    @Html.DisplayNameFor(model => model.Description)
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted border p-3 rounded bg-light">
+                        @Html.DisplayFor(model => model.Description)
+                    </p>
+                </div>
+            </div>
+
+            @* Nếu bạn có thuộc tính đếm số sản phẩm trong ViewModel *@
+            @* @if (Model.ProductCount.HasValue)
+            {
+                <div class="row mb-3">
+                    <div class="col-sm-3 fw-bold text-secondary">Total Products</div>
+                    <div class="col-sm-9">
+                        <span class="badge bg-dark">@Model.ProductCount sản phẩm</span>
+                    </div>
+                </div>
+            } *@
+        </div>
+
+        <div class="card-footer bg-light text-end">
+            <a asp-area="Admin"
+               asp-controller="Categories"
+               asp-action="Index"
+               class="btn btn-secondary px-4">
+                Back to List
+            </a>
+        </div>
+    </div>
+</div>

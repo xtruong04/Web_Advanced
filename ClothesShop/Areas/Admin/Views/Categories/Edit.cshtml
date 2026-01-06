@@ -1,0 +1,57 @@
+﻿@model ClothesShop.Areas.Admin.Models.ViewModel.CategoryViewModel
+
+@{
+    ViewData["Title"] = "Edit Category";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="fw-bold mb-0">Edit Category</h3>
+        </div>
+
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+
+                @* Quan trọng: Hiển thị lỗi từ ModelState *@
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @* Input ẩn để giữ ID sản phẩm *@
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Nhập tên danh mục..." />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Nhập mô tả..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-save"></i> Update
+                    </button>
+                    <a asp-area="Admin"
+                       asp-controller="Categories"
+                       asp-action="Index"
+                       class="btn btn-secondary px-4">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        // Giúp kiểm tra lỗi ngay trên trình duyệt mà không cần load lại trang
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

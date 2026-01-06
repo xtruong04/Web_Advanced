@@ -7,8 +7,8 @@ namespace ClothesShop.Models
     {
         [Key]
         public int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Description { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public decimal Price { get; set; }
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
