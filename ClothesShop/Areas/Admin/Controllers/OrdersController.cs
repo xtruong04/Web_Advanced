@@ -45,25 +45,32 @@ namespace ClothesShop.Areas.Admin.Controllers
         // GET: Admin/Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var order = await _context.Orders
+                .Include(o => o.OrderItems) // Lấy danh sách sản phẩm
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
+
+            if (order == null) return NotFound();
+
+            // Chuyển đổi sang ViewModel
+            var viewModel = new OrderViewModel
             {
-                return NotFound();
-            }
+                Id = order.Id,
+                FullName = order.FullName,
+                PhoneNumber = order.PhoneNumber,
+                OrderDate = order.OrderDate,
+                TotalAmount = order.TotalAmount,
+                OrderStatus = order.orderStatus.ToString(),
+                PaymentStatus = order.paymentStatus.ToString(),
+                // Gộp địa chỉ lại cho đúng định nghĩa ViewModel của bạn
+                ShippingAddress = $"{order.Street}, {order.Ward}, {order.District}, {order.City}"
+            };
 
-            return View(order);
-        }
+            // Để hiển thị sản phẩm, chúng ta truyền order.OrderItems vào ViewBag hoặc thêm vào ViewModel
+            ViewBag.OrderItems = order.OrderItems;
 
-        // GET: Admin/Orders/Create
-        public IActionResult Create()
-        {
-            return View();
+            return View(viewModel);
         }
 
         // POST: Admin/Orders/Create

@@ -11,7 +11,9 @@
 
                 <div class="list-group list-group-flush">
                     <a href="/Profile" class="list-group-item list-group-item-action active">Hồ sơ</a>
-                    <a href="/Orders" class="list-group-item list-group-item-action">Đơn mua</a>
+                    <a asp-controller="Checkout" asp-action="OrderHistory" class="list-group-item list-group-item-action">
+                        Đơn mua
+                    </a>
                     <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
                     <a href="/Address" class="list-group-item list-group-item-action">Sổ địa chỉ</a>
                     <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
