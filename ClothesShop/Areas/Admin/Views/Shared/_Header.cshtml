@@ -1,5 +1,17 @@
 ﻿@* /Areas/Admin/Views/Shared/_Header.cshtml *@
+@using Microsoft.AspNetCore.Identity
+@using ClothesShop.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
+@{
+    // Lấy thông tin user hiện tại
+    var currentUser = await UserManager.GetUserAsync(User);
+    // Nếu không có avatar thì dùng ảnh mặc định
+    var avatarPath = !string.IsNullOrEmpty(currentUser?.AvatarUrl)
+                     ? currentUser.AvatarUrl
+                     : "/Content/admin/assets/img/blank.jpg";
+}
 <header class="main-header">
     <div class="main-header-logo">
         <div class="logo-header" data-background-color="dark">
@@ -50,7 +62,7 @@
                 <li class="nav-item topbar-user dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="~/Content/admin/assets/img/profile.jpg" class="avatar-img rounded-circle" alt="">
+                            <img src="@avatarPath" class="avatar-img rounded" alt="User Avatar">
                         </div>
                         <span class="profile-username">
                             <span class="op-7">Hi,</span>
@@ -63,12 +75,17 @@
                             <div class="dropdown-user-scroll scrollbar-outer">
                                 <div class="user-box">
                                     <div class="avatar-lg">
-                                        <img src="~/Content/admin/assets/img/profile.jpg" class="avatar-img rounded" alt="">
+                                        @* Bạn có thể thay đổi src ảnh dựa trên thuộc tính của User nếu có *@
+                                        <img src="@avatarPath" class="avatar-img rounded" alt="User Avatar">
                                     </div>
                                     <div class="u-text">
-                                        <h4>Hizrian</h4>
-                                        <p class="text-muted">hello@example.com</p>
-                                        <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                        @if (SignInManager.IsSignedIn(User))
+                                        {
+                                            @* Hiển thị FullName hoặc UserName *@
+                                            <h4>@(UserManager.GetUserAsync(User).Result?.Email.Split('@')[0] ?? "User")</h4>
+                                            <p class="text-muted">@User.Identity.Name</p>
+                                        }
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
                                     </div>
                                 </div>
                             </div>
@@ -76,15 +93,22 @@
 
                         <li><div class="dropdown-divider"></div></li>
 
-                        <li><a class="dropdown-item" href="#">My Profile</a></li>
-                        <li><a class="dropdown-item" href="#">My Balance</a></li>
-                        <li><a class="dropdown-item" href="#">Inbox</a></li>
+                        <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">My Profile</a></li>
+                       @*  <li><a class="dropdown-item" href="#">My Balance</a></li>
+                        <li><a class="dropdown-item" href="#">Inbox</a></li> *@
 
                         <li><div class="dropdown-divider"></div></li>
-                        <li><a class="dropdown-item" href="#">Account Setting</a></li>
+                        <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Account Setting</a></li>
 
                         <li><div class="dropdown-divider"></div></li>
-                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                        <li>
+                            @* Quan trọng: Logout trong Identity yêu cầu dùng phương thức POST *@
+                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                                <button type="submit" class="dropdown-item btn-link" style="border:none; background:none; padding: 0.5rem 1.5rem; width: 100%; text-align: left;">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
 

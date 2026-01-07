@@ -24,7 +24,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 .AddDefaultUI();
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login";   // ← đường dẫn trang đăng nhập của bạn
+    options.LoginPath = "/Identity/Account/Login";   // ← đường dẫn trang đăng nhập của bạn
 });
 
 builder.Services.AddControllersWithViews();
