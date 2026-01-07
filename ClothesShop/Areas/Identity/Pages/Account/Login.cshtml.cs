@@ -21,12 +21,14 @@ namespace ClothesShop.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager; // Thêm dòng này
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -116,6 +118,23 @@ namespace ClothesShop.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // 1. Tìm user vừa đăng nhập
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+
+                    // 2. Kiểm tra Role
+                    if (user != null)
+                    {
+                        var roles = await _userManager.GetRolesAsync(user);
+
+                        if (roles.Contains("Admin") || roles.Contains("Employee"))
+                        {
+                            // Nếu là Admin hoặc Employee -> Vào trang Dashboard của Admin
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        }
+                    }
+
+                    // 3. Nếu là Customer hoặc Role khác -> Về trang Home (hoặc ReturnUrl)
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

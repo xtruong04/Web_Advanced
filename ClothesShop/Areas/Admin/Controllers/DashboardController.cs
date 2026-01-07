@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClothesShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    /*[Authorize(Roles = "Admin")] */ // Chỉ admin mới được vào
+    [Authorize(Roles = "Admin,Employee")] // Cả hai đều có quyền vào các mục này
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
