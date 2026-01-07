@@ -116,12 +116,15 @@
                             <p>Product Image</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="@Url.Action("Index","Users", new { area="Admin" })">
-                            <i class="fas fa-users"></i>
-                            <p>Customers</p>
-                        </a>
-                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","Users", new { area="Admin" })">
+                                <i class="fas fa-users"></i>
+                                <p>Customers</p>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

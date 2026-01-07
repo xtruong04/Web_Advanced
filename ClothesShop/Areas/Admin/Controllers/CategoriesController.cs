@@ -3,10 +3,12 @@ using ClothesShop.Models;
 using ClothesShop.Areas.Admin.Models.ViewModel; // Đảm bảo đã khai báo đúng namespace
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClothesShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin,Employee")] // Cả hai đều có quyền vào các mục này
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _db;

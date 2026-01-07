@@ -4,10 +4,12 @@ using ClothesShop.Areas.Admin.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClothesShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin,Employee")] // Cả hai đều có quyền vào các mục này
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _db;
