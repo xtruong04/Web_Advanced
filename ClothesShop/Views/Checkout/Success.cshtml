@@ -1,38 +1,130 @@
 ﻿@model ClothesShop.Models.Order
 
-<div class="container mt-5">
-    <h2>Thank you for your order!</h2>
-    <p>Order #@Model.Id placed successfully.</p>
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
 
-    <h4>Order Details</h4>
-    <ul>
-        <li>Full Name: @Model.FullName</li>
-        <li>Phone: @Model.PhoneNumber</li>
-        <li>Address: @Model.Street, @Model.Ward, @Model.District, @Model.City</li>
-        <li>Order Date: @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</li>
-        <li>Total Amount: $@Model.TotalAmount</li>
-        <li>Order Status: @Model.orderStatus</li>
-        <li>Payment Status: @Model.paymentStatus</li>
-    </ul>
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <div class="display-1 text-success mb-3">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <h1 class="fw-bold">Thank You for Your Order!</h1>
+        <p class="text-muted fs-5">Order #<span class="text-dark fw-bold">@Model.Id</span> has been placed successfully.</p>
+        <div class="mt-3">
+            <a href="/" class="btn btn-outline-primary btn-sm px-4">Continue Shopping</a>
+            <button onclick="window.print()" class="btn btn-secondary btn-sm px-4 ms-2">
+                <i class="bi bi-printer"></i> Print Invoice
+            </button>
+        </div>
+    </div>
 
-    <h4>Products</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.OrderItems)
-            {
-                <tr>
-                    <td>@item.ProductName</td>
-                    <td>@item.Quantity</td>
-                    <td>$@item.PriceAtPurchase</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Customer Information</h5>
+
+                    <div class="mb-3">
+                        <label class="text-muted small d-block">Full Name</label>
+                        <span class="fw-semibold">@Model.FullName</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small d-block">Phone Number</label>
+                        <span class="fw-semibold">@Model.PhoneNumber</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small d-block">Shipping Address</label>
+                        <span class="fw-semibold">
+                            @Model.Street, @Model.Ward, <br />
+                            @Model.District, @Model.City
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small d-block">Order Date</label>
+                        <span class="fw-semibold">@Model.OrderDate.ToString("dd MMM yyyy, HH:mm")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                        <h5 class="fw-bold mb-0">Order Summary</h5>
+                        <div>
+                            @* Logic hiển thị Badge cho trạng thái *@
+                            <span class="badge bg-info text-dark">@Model.orderStatus</span>
+                            @* Giả sử Enum của bạn tên là PaymentStatus và có giá trị là Paid *@
+                            <span class="badge @(Model.paymentStatus == Order.PaymentStatus.Paid ? "bg-success" : "bg-warning text-dark")">
+                                @Model.paymentStatus
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="fw-semibold text-primary">@item.ProductName</span>
+                                        </td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-end">$@item.PriceAtPurchase.ToString("N2")</td>
+                                        <td class="text-end fw-bold">$@((item.Quantity * item.PriceAtPurchase).ToString("N2"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="border-top">
+                                    <td colspan="3" class="text-end fs-5 fw-bold py-3">Total Amount:</td>
+                                    <td class="text-end fs-5 fw-bold text-danger py-3">$@Model.TotalAmount.ToString("N2")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-light rounded-4 border">
+                <p class="small text-muted mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    We will send you a confirmation email with tracking information as soon as your order ships.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            transition: transform 0.2s;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5em 1em;
+            border-radius: 50px;
+        }
+    </style>
+}

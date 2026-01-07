@@ -1,82 +1,53 @@
 ﻿@model ClothesShop.Models.Order
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Cập nhật đơn hàng";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-warning py-3 text-center">
+            <h4 class="mb-0 fw-bold">Cập nhật trạng thái đơn hàng #@Model.Id</h4>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="OrderDate" />
+                <input type="hidden" asp-for="TotalAmount" />
+                <input type="hidden" asp-for="FullName" />
+                <input type="hidden" asp-for="PhoneNumber" />
+                <input type="hidden" asp-for="Street" />
+                <input type="hidden" asp-for="Ward" />
+                <input type="hidden" asp-for="District" />
+                <input type="hidden" asp-for="City" />
 
-<h4>Order</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-control" />
-                <span asp-validation-for="OrderDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalAmount" class="control-label"></label>
-                <input asp-for="TotalAmount" class="form-control" />
-                <span asp-validation-for="TotalAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Street" class="control-label"></label>
-                <input asp-for="Street" class="form-control" />
-                <span asp-validation-for="Street" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ward" class="control-label"></label>
-                <input asp-for="Ward" class="form-control" />
-                <span asp-validation-for="Ward" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="District" class="control-label"></label>
-                <input asp-for="District" class="form-control" />
-                <span asp-validation-for="District" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="orderStatus" class="control-label"></label>
-                <select asp-for="orderStatus" class="form-control"></select>
-                <span asp-validation-for="orderStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="paymentStatus" class="control-label"></label>
-                <select asp-for="paymentStatus" class="form-control"></select>
-                <span asp-validation-for="paymentStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Trạng thái vận chuyển</label>
+                        <select asp-for="orderStatus" class="form-select shadow-sm"
+                                asp-items="Html.GetEnumSelectList<ClothesShop.Models.Order.OrderStatus>()">
+                        </select>
+                        <span asp-validation-for="orderStatus" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Trạng thái thanh toán</label>
+                        <select asp-for="paymentStatus" class="form-select shadow-sm"
+                                asp-items="Html.GetEnumSelectList<ClothesShop.Models.Order.PaymentStatus>()">
+                        </select>
+                        <span asp-validation-for="paymentStatus" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary px-5 fw-bold shadow">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

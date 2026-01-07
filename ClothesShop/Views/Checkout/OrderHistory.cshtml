@@ -1,0 +1,114 @@
+﻿@model IEnumerable<ClothesShop.Models.Order>
+
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5" style="padding-top:120px;">
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm rounded-4 p-3 border-0">
+                <h5 class="fw-bold mb-3 px-3">Tài khoản</h5>
+                <div class="list-group list-group-flush">
+                    <a href="/Profile" class="list-group-item list-group-item-action border-0 rounded-3 mb-1">Hồ sơ</a>
+                    <a asp-controller="Checkout" asp-action="OrderHistory" class="list-group-item list-group-item-action active border-0 rounded-3 mb-1">Đơn mua</a>
+                    <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action border-0 rounded-3 mb-1">Đổi mật khẩu</a>
+                    <a href="/Address" class="list-group-item list-group-item-action border-0 rounded-3 mb-1">Sổ địa chỉ</a>
+                    <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action border-0 rounded-3 text-danger">Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card shadow-sm rounded-4 p-4 border-0">
+                <h3 class="fw-bold mb-4">Đơn hàng của tôi</h3>
+
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var order in Model)
+                    {
+                        <div class="card mb-4 border shadow-none rounded-3 overflow-hidden">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <span class="fw-bold">Mã đơn: #@order.Id</span>
+                                    <span class="text-muted ms-2 small">| @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <div>
+                                    @* Hiển thị Order Status *@
+                                    @{
+                                        var statusClass = order.orderStatus switch
+                                        {
+                                            Order.OrderStatus.Pending => "bg-warning text-dark",
+                                            Order.OrderStatus.Processing => "bg-primary",
+                                            Order.OrderStatus.Shipped => "bg-info text-dark",
+                                            Order.OrderStatus.Delivered => "bg-success",
+                                            Order.OrderStatus.Cancelled => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @statusClass me-1">@order.orderStatus</span>
+
+                                    @* Hiển thị Payment Status *@
+                                    @{
+                                        var payClass = order.paymentStatus switch
+                                        {
+                                            Order.PaymentStatus.Paid => "bg-success",
+                                            Order.PaymentStatus.Unpaid => "bg-secondary",
+                                            Order.PaymentStatus.Refunded => "bg-dark",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @payClass">@order.paymentStatus</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <p class="mb-1 small"><strong>Người nhận:</strong> @order.FullName</p>
+                                        <p class="mb-0 small text-muted text-truncate">
+                                            <strong>Giao đến:</strong> @order.Street, @order.Ward, @order.District, @order.City
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                        <span class="text-muted small d-block">Tổng cộng</span>
+                                        <span class="h5 fw-bold text-danger">$@order.TotalAmount.ToString("N2")</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-top-0 d-flex justify-content-end pb-3">
+                                <a asp-controller="Checkout" asp-action="Success" asp-route-id="@order.Id"
+                                   class="btn btn-sm btn-outline-dark px-4 rounded-pill">
+                                    Xem chi tiết
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" style="width: 100px; opacity: 0.5" />
+                        <p class="mt-3 text-muted">Bạn chưa có đơn hàng nào.</p>
+                        <a href="/" class="btn btn-primary px-4">Tiếp tục mua sắm</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .list-group-item.active {
+            background-color: #000 !important;
+            border-color: #000 !important;
+            font-weight: bold;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5em 0.8em;
+        }
+    </style>
+}

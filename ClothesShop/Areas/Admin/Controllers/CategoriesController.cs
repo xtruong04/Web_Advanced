@@ -134,7 +134,14 @@ namespace ClothesShop.Areas.Admin.Controllers
                 if (hasProducts)
                 {
                     ModelState.AddModelError("", "Không thể xóa danh mục này vì vẫn còn sản phẩm bên trong.");
-                    return View("Delete", category);
+                    var vm = new CategoryViewModel
+                    {
+                        Id = category.Id,
+                        Name = category.Name,
+                        Description = category.Description
+                    };
+
+                    return View("Delete", vm); // Trả về vm kiểu CategoryViewModel
                 }
 
                 _db.Categories.Remove(category);

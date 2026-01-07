@@ -111,5 +111,18 @@ namespace ClothesShop.Controllers
 
             return View(order); // view Success.cshtml
         }
+        [Authorize]
+        public async Task<IActionResult> OrderHistory()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            // Lấy tất cả đơn hàng của User này, sắp xếp mới nhất lên đầu
+            var orders = await _db.Orders
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return View(orders); // Bạn sẽ cần tạo thêm file View OrderHistory.cshtml
+        }
     }
 }
