@@ -279,9 +279,9 @@
 </div>
 <!-- Vendor End -->
 <script type="text/javascript">
-	function addToCart(id, name, image, price, quantity) {
+		function addToCart(id, name, image, price, quantity) {
 		$.ajax({
-			url: '@Url.Action("Add", "Cart")',  // URL đến action "Add" của controller "Cart"
+			url: '@Url.Action("Add", "Cart")',
 			type: 'POST',
 			data: {
 				id: id,
@@ -291,13 +291,16 @@
 				quantity: quantity
 			},
 			success: function(response) {
-				// Có thể cập nhật giỏ hàng hoặc thông báo thành công
-				alert("Đã thêm sản phẩm vào giỏ hàng!");
-				location.reload();  // Tải lại trang giỏ hàng sau khi thêm
+				if (response.success) {
+					// Sử dụng Toastr ở đây
+					toastr.success('Đã thêm thành công ' + name + ' vào giỏ hàng!');
+
+					// Cập nhật số lượng giỏ hàng trên Header nếu có ID
+					$('#cart-count').text(response.cartCount);
+				}
 			},
-			error: function(xhr, status, error) {
-				// Hiển thị lỗi nếu có sự cố
-				alert("Có lỗi xảy ra. Vui lòng thử lại.");
+			error: function() {
+				toastr.error('Có lỗi xảy ra khi thêm vào giỏ hàng.');
 			}
 		});
 	}
