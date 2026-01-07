@@ -24,6 +24,11 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/Content/clientpage/assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
@@ -51,6 +56,31 @@
 
     <!-- Template Javascript -->
     <script src="~/Content/clientpage/assets/js/main.js"></script>
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "3000", // Tự biến mất sau 3 giây
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>toastr.success('@TempData["Success"]');</text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>toastr.error('@TempData["Error"]');</text>
+        }
+    </script>
     @RenderSection("Scripts", required: false)
 
 </body>

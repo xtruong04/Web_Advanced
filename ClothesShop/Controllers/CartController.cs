@@ -61,6 +61,7 @@ namespace ClothesShop.Controllers
             try
             {
                 CartHelper.RemoveFromCart(HttpContext.Session, id);
+                TempData["Success"] = "Đã xóa sản phẩm khỏi giỏ hàng!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -71,6 +72,7 @@ namespace ClothesShop.Controllers
         public ActionResult Clear()
         {
             CartHelper.ClearCart(HttpContext.Session);
+            TempData["Success"] = "Đã xóa tất cả sản phẩm khỏi giỏ hàng!";
             return RedirectToAction("Index");
 
         }
