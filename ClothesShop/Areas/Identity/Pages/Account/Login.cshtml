@@ -48,8 +48,13 @@
                class="btn btn-outline-primary w-100 py-2 rounded-3 fw-semibold">
                 Tạo tài khoản mới
             </a>
-        </div>
+            <form asp-action="ExternalLogin" asp-controller="Account" method="post">
+                <button type="submit" name="provider" value="Google" class="btn btn-outline-danger w-100 py-2 rounded-3 fw-semibold">
 
+                    <i class="fab fa-google mr-2"></i> Đăng nhập bằng Google
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 

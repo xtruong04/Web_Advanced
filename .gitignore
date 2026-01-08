@@ -26,3 +26,12 @@ packages/
 *.opendb
 *.mdf
 *.ldf
+# Cấu hình chứa thông tin bí mật (ClientId, Secret, Email Password)
+appsettings.json
+appsettings.Development.json
+
+# Nếu bạn dùng User Secrets (Visual Studio tự tạo ở folder ngoài, nhưng thêm vào cho chắc)
+secrets.json
+
+# Các file môi trường khác
+.env
