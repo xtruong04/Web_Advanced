@@ -111,7 +111,19 @@ namespace ClothesShop.Areas.Identity.Pages.Account
             // 1. Thử đăng nhập nếu đã từng liên kết
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
 
-            if (result.Succeeded) return LocalRedirect(returnUrl);
+            if (result.Succeeded)
+            {
+                // Lấy user từ thông tin login bên ngoài
+                var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                var roles = await _userManager.GetRolesAsync(user);
+
+                if (roles.Contains("Admin") || roles.Contains("Employee"))
+                {
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                }
+
+                return LocalRedirect(returnUrl);
+            }
 
             // 2. Nếu chưa có liên kết, kiểm tra xem Email đã tồn tại trong hệ thống chưa
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
