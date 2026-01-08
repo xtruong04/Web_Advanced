@@ -155,7 +155,7 @@
 						</div>
 					</div>
 					<div class="text-center py-4">
-						<a class="h6 text-decoration-none text-truncate" href="">@item.Name</a>
+						<a class="h6 text-decoration-none text-truncate" href="@Url.Action("ShopDetails", "Shop", new { id = item.Id })">@item.Name</a>
 						<div class="d-flex align-items-center justify-content-center mt-2">
 							<h5>@item.Price.ToString("#,##0") VND</h5>
 						</div>

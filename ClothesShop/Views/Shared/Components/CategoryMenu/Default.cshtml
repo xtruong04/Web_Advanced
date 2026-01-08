@@ -2,7 +2,9 @@
 
 @foreach (var item in Model)
 {
-    <a href="/product-by-category-@item.Id"
+    <a asp-controller="Shop"
+       asp-action="Index"
+       asp-route-cateId="@item.Id"
        class="dropdown-item">
         @item.Name
     </a>
