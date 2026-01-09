@@ -6,17 +6,7 @@
 
         <!-- Sidebar -->
         <div class="col-md-3 mb-4">
-            <div class="card shadow-sm rounded-4 p-3">
-                <h5 class="fw-bold mb-3">Tài khoản</h5>
-
-                <div class="list-group">
-                    <a href="/Profile" class="list-group-item list-group-item-action">Hồ sơ</a>
-                    <a href="/Orders" class="list-group-item list-group-item-action">Đơn mua</a>
-                    <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
-                    <a href="/AddressBook" class="list-group-item list-group-item-action">Sổ địa chỉ</a>
-                    <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
-                </div>
-            </div>
+            @await Html.PartialAsync("_AccountSidebar")
         </div>
 
         <!-- Main Content -->

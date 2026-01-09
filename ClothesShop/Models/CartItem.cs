@@ -12,6 +12,7 @@ namespace ClothesShop.Models
         public string ProductImage { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
+        public string Size { get; set; } // THÊM DÒNG NÀY
         public decimal Total => Price * Quantity;
     }
 }

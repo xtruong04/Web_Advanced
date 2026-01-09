@@ -67,9 +67,13 @@
                         {
                             foreach (var item in Model.Cart.Items)
                             {
-                                <div class="d-flex justify-content-between">
-                                    <p>@item.ProductName x @item.Quantity</p>
-                                    <p>$@item.Price</p>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div>
+                                        <p class="mb-0"><strong>@item.ProductName</strong> x @item.Quantity</p>
+                                        @* HIỂN THỊ SIZE Ở ĐÂY *@
+                                        <small class="text-muted">Size: @(string.IsNullOrEmpty(item.Size) ? "N/A" : item.Size)</small>
+                                    </div>
+                                    <p class="mb-0">$@(item.Price * item.Quantity)</p>
                                 </div>
                             }
                         }

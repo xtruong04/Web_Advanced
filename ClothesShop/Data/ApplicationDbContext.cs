@@ -16,5 +16,8 @@ namespace ClothesShop.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }    
         public DbSet<ClothesShop.Models.ProductImages> ProductImages { get; set; } = default!;
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<ProductSize> ProductSizes { get; set; }
+
     }
 }

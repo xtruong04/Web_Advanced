@@ -87,3 +87,16 @@ VALUES (NEWID(), 'Employee', 'EMPLOYEE', NEWID());
 -- Thêm Role Customer
 INSERT INTO [AspNetRoles] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
 VALUES (NEWID(), 'Customer', 'CUSTOMER', NEWID());
+
+INSERT INTO [dbo].[ProductSizes] ([ProductId], [SizeName], [Inventory])
+SELECT 
+    p.Id, 
+    s.SizeName, 
+    ABS(CHECKSUM(NewId())) % 41 + 10 -- Sinh số ngẫu nhiên từ 10 đến 50
+FROM [dbo].[Product] p
+CROSS JOIN (
+    SELECT 'S' AS SizeName UNION ALL
+    SELECT 'M' UNION ALL
+    SELECT 'L' UNION ALL
+    SELECT 'XL'
+) s;

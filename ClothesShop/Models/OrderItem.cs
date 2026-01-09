@@ -10,6 +10,7 @@
         public Product? Product { get; set; }
         public string ProductName { get; set; }
         public int Quantity { get; set; }
+        public string Size { get; set; } // THÊM DÒNG NÀY
         public decimal PriceAtPurchase { get; set; }
     }
 }
