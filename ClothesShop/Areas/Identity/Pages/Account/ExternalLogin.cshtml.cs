@@ -133,21 +133,37 @@ namespace ClothesShop.Areas.Identity.Pages.Account
 
                 if (user == null)
                 {
-                    // TỰ ĐỘNG ĐĂNG KÝ: Tạo User mới nếu chưa tồn tại
+                    // TỰ ĐỘNG ĐĂNG KÝ (Trường hợp User hoàn toàn mới)
                     user = new ApplicationUser
                     {
                         UserName = email,
                         Email = email,
-                        EmailConfirmed = true // Vì Google đã xác thực mail này rồi
+                        EmailConfirmed = true
                     };
-                    await _userManager.CreateAsync(user);
-                    await _userManager.AddToRoleAsync(user, "Customer"); // Gán quyền mặc định
+
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (createResult.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(user, "Customer");
+                        // QUAN TRỌNG: Phải liên kết Login này với User mới tạo
+                        await _userManager.AddLoginAsync(user, info);
+                        _logger.LogInformation("Đã tạo user mới và liên kết Google: {Email}", email);
+                    }
+                }
+                else
+                {
+                    // TRƯỜNG HỢP EMAIL ĐÃ TỒN TẠI (Người dùng đã đăng ký trước đó bằng User/Pass)
+                    // Kiểm tra xem đã có liên kết Google chưa, nếu chưa thì thêm vào
+                    var logins = await _userManager.GetLoginsAsync(user);
+                    if (logins.All(x => x.LoginProvider != info.LoginProvider))
+                    {
+                        await _userManager.AddLoginAsync(user, info);
+                        _logger.LogInformation("Đã liên kết tài khoản Google cho email có sẵn: {Email}", email);
+                    }
                 }
 
-                // 3. Liên kết User này với tài khoản Google vừa đăng nhập
-                await _userManager.AddLoginAsync(user, info);
+                // 3. Đăng nhập
                 await _signInManager.SignInAsync(user, isPersistent: false);
-
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -194,6 +210,10 @@ namespace ClothesShop.Areas.Identity.Pages.Account
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        await _userManager.AddToRoleAsync(user, "Customer");
+
+                        result = await _userManager.AddLoginAsync(user, info);
+                        // ...
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
                         var userId = await _userManager.GetUserIdAsync(user);
