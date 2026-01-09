@@ -1,0 +1,30 @@
+﻿@{
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+}
+
+<div class="card shadow-sm rounded-4 p-3 border-0">
+    <h5 class="fw-bold mb-3 px-3">Tài khoản</h5>
+    <div class="list-group list-group-flush sidebar-account">
+        <a href="/Profile" class="list-group-item list-group-item-action border-0 rounded-3 mb-1 @(currentController == "Profile" ? "active" : "")">
+            <i class="bi bi-person me-2"></i> Hồ sơ
+        </a>
+
+        <a asp-controller="Checkout" asp-action="OrderHistory"
+           class="list-group-item list-group-item-action border-0 rounded-3 mb-1 @(currentAction == "OrderHistory" ? "active" : "")">
+            <i class="bi bi-bag me-2"></i> Đơn mua
+        </a>
+
+      @*   <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action border-0 rounded-3 mb-1 @(currentAction == "ChangePassword" ? "active" : "")">
+            <i class="bi bi-shield-lock me-2"></i> Đổi mật khẩu
+        </a> *@
+
+        <a href="/Address" class="list-group-item list-group-item-action border-0 rounded-3 mb-1 @(currentController == "Address" ? "active" : "")">
+            <i class="bi bi-geo-alt me-2"></i> Sổ địa chỉ
+        </a>
+
+        <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action border-0 rounded-3 text-danger mt-2">
+            <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+        </a>
+    </div>
+</div>

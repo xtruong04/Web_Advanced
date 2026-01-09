@@ -1,23 +1,9 @@
 ﻿@model IEnumerable<ClothesShop.Models.Order>
 
-@{
-    ViewData["Title"] = "Lịch sử đơn hàng";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
 <div class="container mt-5" style="padding-top:120px;">
     <div class="row">
         <div class="col-md-3 mb-4">
-            <div class="card shadow-sm rounded-4 p-3 border-0">
-                <h5 class="fw-bold mb-3 px-3">Tài khoản</h5>
-                <div class="list-group list-group-flush">
-                    <a href="/Profile" class="list-group-item list-group-item-action border-0 rounded-3 mb-1">Hồ sơ</a>
-                    <a asp-controller="Checkout" asp-action="OrderHistory" class="list-group-item list-group-item-action active border-0 rounded-3 mb-1">Đơn mua</a>
-                    <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action border-0 rounded-3 mb-1">Đổi mật khẩu</a>
-                    <a href="/Address" class="list-group-item list-group-item-action border-0 rounded-3 mb-1">Sổ địa chỉ</a>
-                    <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action border-0 rounded-3 text-danger">Đăng xuất</a>
-                </div>
-            </div>
+            @await Html.PartialAsync("_AccountSidebar")
         </div>
 
         <div class="col-md-9">
@@ -100,15 +86,39 @@
 
 @section Styles {
     <style>
-        .list-group-item.active {
-            background-color: #000 !important;
-            border-color: #000 !important;
-            font-weight: bold;
+        /* Tổng thể Sidebar */
+        .sidebar-account .list-group-item {
+            padding: 12px 18px;
+            font-weight: 500;
+            color: #444;
+            transition: all 0.2s ease-in-out;
+            background-color: transparent;
         }
 
-        .badge {
-            font-weight: 500;
-            padding: 0.5em 0.8em;
+            /* Khi di chuột qua (Hover) */
+            .sidebar-account .list-group-item:hover {
+                background-color: #f8f9fa;
+                color: #000;
+                transform: translateX(5px); /* Hiệu ứng nhích nhẹ sang phải */
+            }
+
+            /* KHI MỤC ĐƯỢC CHỌN (ACTIVE) - ĐỔI SANG MÀU ĐEN */
+            .sidebar-account .list-group-item.active {
+                background-color: #212529 !important; /* Màu đen Raven */
+                color: #ffffff !important; /* Chữ trắng */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                font-weight: 600;
+            }
+
+            /* Căn chỉnh icon cho đẹp */
+            .sidebar-account .list-group-item i {
+                font-size: 1.1rem;
+                vertical-align: middle;
+            }
+
+        /* Đè lại các viền mặc định của Bootstrap */
+        .list-group-item {
+            border: none !important;
         }
     </style>
 }

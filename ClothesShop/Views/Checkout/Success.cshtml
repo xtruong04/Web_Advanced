@@ -68,27 +68,35 @@
 
                     <div class="table-responsive">
                         <table class="table table-borderless align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Product</th>
-                                    <th class="text-center">Qty</th>
-                                    <th class="text-end">Price</th>
-                                    <th class="text-end">Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.OrderItems)
-                                {
+                            <table class="table table-borderless align-middle">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>
-                                            <span class="fw-semibold text-primary">@item.ProductName</span>
-                                        </td>
-                                        <td class="text-center">@item.Quantity</td>
-                                        <td class="text-end">$@item.PriceAtPurchase.ToString("N2")</td>
-                                        <td class="text-end fw-bold">$@((item.Quantity * item.PriceAtPurchase).ToString("N2"))</td>
+                                        <th>Product</th>
+                                        <th class="text-center">Size</th> @* THÊM CỘT NÀY *@
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-end">Price</th>
+                                        <th class="text-end">Subtotal</th>
                                     </tr>
-                                }
-                            </tbody>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="fw-semibold text-primary">@item.ProductName</span>
+                                            </td>
+                                            <td class="text-center">
+                                                @* HIỂN THỊ SIZE *@
+                                                <span class="badge bg-secondary">@(string.IsNullOrEmpty(item.Size) ? "N/A" : item.Size)</span>
+                                            </td>
+                                            <td class="text-center">@item.Quantity</td>
+                                            <td class="text-end">$@item.PriceAtPurchase.ToString("N2")</td>
+                                            <td class="text-end fw-bold">$@((item.Quantity * item.PriceAtPurchase).ToString("N2"))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                @* ... giữ nguyên phần tfoot ... *@
+                            </table>
                             <tfoot>
                                 <tr class="border-top">
                                     <td colspan="3" class="text-end fs-5 fw-bold py-3">Total Amount:</td>

@@ -67,17 +67,22 @@ namespace ClothesShop.Controllers
             return View(items);
         }
 
-        public ActionResult ShopDetails(int id)
+        // ShopController.cs
+        public IActionResult ShopDetails(int id)
         {
-            var item = _context.Product
+            var product = _context.Product
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages)
+                .Include(p => p.ProductSizes) // Đảm bảo nạp danh sách Size
+                .AsNoTracking() // Thêm dòng này để tăng tốc độ truy vấn (chỉ đọc)
                 .FirstOrDefault(p => p.Id == id);
 
-            if (item == null)
-                return Redirect("/not-found");
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-            return View(item);
+            return View(product);
         }
 
         public ActionResult GetProductByCate(int proId, int CateId)

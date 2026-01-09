@@ -14,5 +14,6 @@ namespace ClothesShop.Models
         public int CategoryId { get; set; }
         public virtual Category? Category { get; set; }
         public List<ProductImages>? ProductImages { get; set; }
+        public virtual List<ProductSize>? ProductSizes { get; set; }
     }
 }

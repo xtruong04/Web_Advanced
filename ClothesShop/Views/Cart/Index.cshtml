@@ -1,85 +1,109 @@
 ﻿@model ClothesShop.Models.CartViewModel
 
-<h2>Giỏ hàng</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold">Giỏ hàng của bạn</h2>
 
-<table class="table">
-	<thead>
-		<tr>
-			<th>Hình ảnh</th>
-			<th>Tên sản phẩm</th>
-			<th>Giá</th>
-			<th>Số lượng</th>
-			<th>Tổng</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var item in Model.Items)
-		{
-			<tr>
-				<td class="align-middle" style="width: 100px;">
-					<div style="width: 80px; height: 80px; overflow: hidden; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
-						@{
-							var imgUrl = item.ProductImage;
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Sản phẩm</th>
+                        <th>Size</th> @* THÊM CỘT SIZE *@
+                        <th>Giá</th>
+                        <th style="width: 200px;">Số lượng</th>
+                        <th>Tổng</th>
+                        <th class="pe-4 text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="align-middle ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div style="width: 70px; height: 70px; overflow: hidden; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
+                                        @{
+                                            var rawPath = item.ProductImage;
+                                            string finalUrl = "/img/default.jpg"; // Mặc định ban đầu
 
-							// 1. Kiểm tra nếu ProductImage chứa chuỗi lỗi do truyền List từ View
-							if (!string.IsNullOrEmpty(imgUrl) && imgUrl.Contains("System.Collections.Generic.List"))
-							{
-								// Gán tạm ảnh mặc định, Controller sẽ xử lý lại khi bạn thêm mới sản phẩm
-								imgUrl = "/Content/clientpage/assets/img/default.jpg";
-							}
-							else
-							{
-								// 2. Chuẩn hóa dấu gạch chéo: đổi \ thành /
-								imgUrl = imgUrl?.Replace("\\", "/");
+                                            if (!string.IsNullOrEmpty(rawPath) && !rawPath.Contains("System.Collections.Generic"))
+                                            {
+                                                // Bước 1: Nếu chuỗi bị dính liền "Contentclientpage...", ta chèn lại dấu /
+                                                // Logic: Nếu chuỗi bắt đầu bằng "Content" nhưng không có dấu /, ta xử lý thủ công
+                                                if (rawPath.StartsWith("Content") && !rawPath.Contains("/"))
+                                                {
+                                                    // Chuyển "Contentclientpageassetsimgproduct-2.jpg" thành đường dẫn có dấu /
+                                                    // Lưu ý: Bạn cần kiểm tra xem thư mục thật là "Content/clientpage/..." hay "Contents/..."
+                                                    finalUrl = "/Content/clientpage/assets/img/" + rawPath.Replace("Contentclientpageassetsimg", "");
+                                                }
+                                                else
+                                                {
+                                                    // Bước 2: Chuẩn hóa đường dẫn bình thường
+                                                    finalUrl = "/" + rawPath.Replace("\\", "/").TrimStart('/');
+                                                }
+                                            }
+                                        }
+                                        <img src="@finalUrl"
+                                             alt="@item.ProductName"
+                                             class="img-fluid h-100 w-100 object-fit-cover"
+                                             onerror="this.onerror=null;this.src='/img/vendor-1.jpg';" />
+                                        @* Thay /img/default.jpg bằng /img/vendor-1.jpg vì vendor-1 thường có sẵn trong template MultiShop *@
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">@item.ProductName</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <span class="badge bg-secondary rounded-pill px-3">@item.Size</span> @* HIỂN THỊ SIZE *@
+                            </td>
+                            <td class="align-middle">@item.Price.ToString("N0") đ</td>
+                            <td class="align-middle">
+                                <form action="@Url.Action("UpdateQuantity", "Cart")" method="post" class="d-flex gap-2">
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1"
+                                           class="form-control form-control-sm text-center" style="width: 70px;" />
 
-								// 3. Đảm bảo luôn bắt đầu bằng dấu / để trỏ đúng thư mục wwwroot
-								if (!string.IsNullOrEmpty(imgUrl) && !imgUrl.StartsWith("/"))
-								{
-									imgUrl = "/" + imgUrl;
-								}
-							}
+                                    @* QUAN TRỌNG: Gửi cả ID và Size để Update *@
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <input type="hidden" name="size" value="@item.Size" />
 
-							// Nếu vẫn trống thì dùng ảnh mặc định
-							if (string.IsNullOrEmpty(imgUrl)) imgUrl = "/Content/clientpage/assets/img/default.jpg";
-						}
+                                    <button type="submit" class="btn btn-outline-primary btn-sm rounded-3">Lưu</button>
+                                </form>
+                            </td>
+                            <td class="align-middle fw-bold text-primary">@item.Total.ToString("N0") đ</td>
+                            <td class="align-middle pe-4 text-end">
+                                @* QUAN TRỌNG: Gửi cả ID và Size để Xóa *@
+                                <a href="@Url.Action("Remove", "Cart", new { id = item.ProductId, size = item.Size })"
+                                   class="btn btn-outline-danger btn-sm rounded-circle shadow-sm" title="Xóa">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-						<img src="@imgUrl"
-							 alt="@item.ProductName"
-							 class="img-fluid"
-							 style="width: 100%; height: 100%; object-fit: cover;"
-							 onerror="this.onerror=null;this.src='/Content/clientpage/assets/img/default.jpg';" />
-					</div>
-				</td>
-				<td>@item.ProductName</td>
-				<td>@item.Price.ToString("C")</td>
-				<td>
-					<form action="@Url.Action("UpdateQuantity", "Cart")" method="post">
-						<input type="number" name="quantity" value="@item.Quantity" min="1" />
-						<input type="hidden" name="productId" value="@item.ProductId" />
-						<button type="submit" class="btn btn-primary">Cập nhật</button>
-					</form>
-				</td>
-				<td>@item.Total.ToString("C")</td>
-				<td>
-					<a href="@Url.Action("Remove", "Cart", new { id = item.ProductId })"
-					   class="btn btn-danger">
-						Xóa
-					</a>
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
-
-<p>
-	Tổng tiền: @Model.CartTotal.ToString("C")
-</p>
-@* <p>
-	Phí vận chuyển: @Model.ShippingCost.ToString("C")
-</p>
-<p>
-	Tổng cộng: @Model.Total.ToString("C")
-</p> *@
-
-<a href="@Url.Action("Clear", "Cart")" class="btn btn-warning">Xóa tất cả</a>
+    <div class="card mt-4 shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <a href="@Url.Action("Clear", "Cart")" class="btn btn-outline-danger rounded-pill px-4">
+                        <i class="fas fa-trash-sweep me-2"></i> Xóa tất cả giỏ hàng
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="mb-3">
+                        <span class="text-muted">Tổng cộng:</span>
+                        <h3 class="d-inline-block ms-2 text-primary fw-bold">@Model.CartTotal.ToString("N0") đ</h3>
+                    </div>
+                    <a href="@Url.Action("Index", "Checkout")" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm w-100 w-md-auto">
+                        TIẾN HÀNH ĐẶT HÀNG <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

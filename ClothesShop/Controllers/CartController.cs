@@ -30,26 +30,41 @@ namespace ClothesShop.Controllers
             return PartialView();
         }
         [HttpPost]
-        public IActionResult Add(int id, string name, string image, decimal price, int quantity)
+        public IActionResult Add(int id, string name, string image, decimal price, int quantity, string size)
         {
-            // KIỂM TRA LỖI: Nếu image chứa text "System.Collections..."
+            // 1. Kiểm tra xem người dùng đã chọn size chưa
+            if (string.IsNullOrEmpty(size))
+            {
+                return Json(new { success = false, message = "Vui lòng chọn size trước khi thêm!" });
+            }
+
+            // 2. Kiểm tra tồn kho (Inventory) trong DB
+            var sizeInfo = _context.Set<ProductSize>()
+                .FirstOrDefault(ps => ps.ProductId == id && ps.SizeName == size);
+
+            if (sizeInfo == null || sizeInfo.Inventory < quantity)
+            {
+                return Json(new { success = false, message = "Sản phẩm size này đã hết hàng hoặc không đủ số lượng!" });
+            }
+
+            // 3. Xử lý ảnh lỗi như cũ
             if (string.IsNullOrEmpty(image) || image.Contains("System.Collections.Generic"))
             {
-                // Truy vấn DB lấy lại ảnh đầu tiên của sản phẩm này
                 var product = _context.Product
                     .Include(p => p.ProductImages)
                     .FirstOrDefault(p => p.Id == id);
-
                 image = product?.ProductImages?.FirstOrDefault()?.ImageUrl ?? "/Content/clientpage/assets/img/default.jpg";
             }
 
+            // 4. Tạo Item giỏ hàng mới (có Size)
             var item = new CartItem
             {
                 ProductId = id,
                 ProductName = name,
                 ProductImage = image,
                 Price = price,
-                Quantity = quantity
+                Quantity = quantity,
+                Size = size // Gán size ở đây
             };
 
             CartHelper.AddToCart(HttpContext.Session, item);
@@ -62,30 +77,15 @@ namespace ClothesShop.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateQuantity(int productId, int quantity)
+        public ActionResult UpdateQuantity(int productId, string size, int quantity) // Thêm tham số string size
         {
-            try
-            {
-                CartHelper.UpdateQuantity(HttpContext.Session, productId, quantity);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                return View("Error");
-            }
+            CartHelper.UpdateQuantity(HttpContext.Session, productId, size, quantity);
+            return RedirectToAction("Index");
         }
-        public ActionResult Remove(int id)
+        public ActionResult Remove(int id, string size) // Thêm tham số string size
         {
-            try
-            {
-                CartHelper.RemoveFromCart(HttpContext.Session, id);
-                TempData["Success"] = "Đã xóa sản phẩm khỏi giỏ hàng!";
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                return View("Error");
-            }
+            CartHelper.RemoveFromCart(HttpContext.Session, id, size);
+            return RedirectToAction("Index");
         }
         public ActionResult Clear()
         {

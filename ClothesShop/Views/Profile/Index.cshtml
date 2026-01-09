@@ -6,19 +6,7 @@
 
         <!-- Sidebar -->
         <div class="col-md-3 mb-4">
-            <div class="card shadow-sm rounded-4 p-3">
-                <h5 class="fw-bold mb-3">Tài khoản</h5>
-
-                <div class="list-group list-group-flush">
-                    <a href="/Profile" class="list-group-item list-group-item-action active">Hồ sơ</a>
-                    <a asp-controller="Checkout" asp-action="OrderHistory" class="list-group-item list-group-item-action">
-                        Đơn mua
-                    </a>
-                    <a href="/Manage/ChangePassword" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
-                    <a href="/Address" class="list-group-item list-group-item-action">Sổ địa chỉ</a>
-                    <a href="/Identity/Account/Logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
-                </div>
-            </div>
+            @await Html.PartialAsync("_AccountSidebar")
         </div>
 
         <!-- Main Content -->
@@ -127,3 +115,39 @@
 
     </div>
 </div>
+<style>
+    /* Tổng thể Sidebar */
+    .sidebar-account .list-group-item {
+        padding: 12px 18px;
+        font-weight: 500;
+        color: #444;
+        transition: all 0.2s ease-in-out;
+        background-color: transparent;
+    }
+
+        /* Khi di chuột qua (Hover) */
+        .sidebar-account .list-group-item:hover {
+            background-color: #f8f9fa;
+            color: #000;
+            transform: translateX(5px); /* Hiệu ứng nhích nhẹ sang phải */
+        }
+
+        /* KHI MỤC ĐƯỢC CHỌN (ACTIVE) - ĐỔI SANG MÀU ĐEN */
+        .sidebar-account .list-group-item.active {
+            background-color: #212529 !important; /* Màu đen Raven */
+            color: #ffffff !important; /* Chữ trắng */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+        }
+
+        /* Căn chỉnh icon cho đẹp */
+        .sidebar-account .list-group-item i {
+            font-size: 1.1rem;
+            vertical-align: middle;
+        }
+
+    /* Đè lại các viền mặc định của Bootstrap */
+    .list-group-item {
+        border: none !important;
+    }
+</style>
