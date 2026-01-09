@@ -1,0 +1,106 @@
+﻿@model IEnumerable<ClothesShop.Models.ProductSize>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded h-100 p-4">
+        @* HIỂN THỊ TÊN SẢN PHẨM *@
+        <h6 class="mb-4">
+            Quản lý Size - Sản phẩm: <span class="text-primary text-uppercase">@ViewBag.ProductName</span>
+        </h6>
+
+        <div class="row g-2 mb-4">
+            <div class="col-md-4">
+                <select id="sizeName" class="form-select border-0 shadow-sm">
+                    <option value="S">Size S</option>
+                    <option value="M">Size M</option>
+                    <option value="L">Size L</option>
+                    <option value="XL">Size XL</option>
+                    <option value="XXL">Size XXL</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="number" id="inventory" class="form-control border-0 shadow-sm" placeholder="Số lượng tồn kho" min="1">
+            </div>
+            <div class="col-md-4">
+                <button type="button" onclick="saveSize()" class="btn btn-primary w-100 shadow-sm">
+                    <i class="fas fa-plus me-2"></i>Thêm Size
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tên Size</th>
+                        <th>Tồn kho</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><span class="badge bg-info text-dark">@item.SizeName</span></td>
+                                <td><strong>@item.Inventory</strong> cái</td>
+                                <td class="text-center">
+                                    <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="deleteSize(@item.Id)">
+                                        <i class="fas fa-trash-alt"></i> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">Chưa có size nào được thiết lập.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function saveSize() {
+        var data = {
+            productId: @ViewBag.ProductId,
+            sizeName: $("#sizeName").val(),
+            inventory: $("#inventory").val()
+        };
+
+        if(!data.inventory || data.inventory <= 0) {
+            toastr.warning("Vui lòng nhập số lượng tồn kho hợp lệ!");
+            return;
+        }
+
+        $.post('/Admin/Products/AddSize', data, function(res) {
+            if(res.success) {
+                toastr.success("Đã cập nhật size " + data.sizeName + " thành công!");
+                setTimeout(function() { location.reload(); }, 1000);
+            } else {
+                toastr.error("Có lỗi xảy ra: " + (res.message || "Không thể lưu"));
+            }
+        }).fail(function() {
+            toastr.error("Lỗi kết nối! Kiểm tra lại đường dẫn /Admin/Products/AddSize");
+        });
+    }
+
+    function deleteSize(id, name) {
+        if(confirm("Bạn chắc chắn muốn xóa Size " + name + "? Hành động này không thể hoàn tác.")) {
+            $.post('/Admin/Products/DeleteSize', { id: id }, function(res) {
+                if(res.success) {
+                    toastr.success("Đã xóa Size " + name + " khỏi hệ thống.");
+                    setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    toastr.error("Xóa thất bại!");
+                }
+            }).fail(function() {
+                toastr.error("Lỗi khi gửi yêu cầu xóa!");
+            });
+        }
+    }
+</script>

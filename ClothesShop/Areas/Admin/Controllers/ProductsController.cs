@@ -212,6 +212,58 @@ namespace ClothesShop.Areas.Admin.Controllers
                 selectedCategoryId
             );
         }
+        [HttpGet]
+        // Thay vì productId, hãy dùng id để khớp với asp-route-id từ View gửi sang
+        [HttpGet]
+        public IActionResult ManageSizes(int id) // Sử dụng 'id' để khớp với nút bấm
+        {
+            var product = _db.Product
+                .Include(p => p.ProductSizes)
+                .FirstOrDefault(p => p.Id == id);
 
+            if (product == null) return NotFound();
+
+            // Truyền tên sản phẩm qua ViewBag
+            ViewBag.ProductName = product.Name;
+            ViewBag.ProductId = id;
+
+            return View(product.ProductSizes.ToList());
+        }
+
+        [HttpPost]
+        public IActionResult AddSize(int productId, string sizeName, int inventory)
+        {
+            // Kiểm tra xem size này đã tồn tại cho sản phẩm này chưa
+            var existing = _db.Set<ProductSize>()
+                .FirstOrDefault(ps => ps.ProductId == productId && ps.SizeName == sizeName);
+
+            if (existing != null)
+            {
+                existing.Inventory += inventory;
+            }
+            else
+            {
+                var newSize = new ProductSize
+                {
+                    ProductId = productId,
+                    SizeName = sizeName,
+                    Inventory = inventory
+                };
+                _db.Add(newSize);
+            }
+
+            _db.SaveChanges();
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        public IActionResult DeleteSize(int id)
+        {
+            var size = _db.Set<ProductSize>().Find(id);
+            if (size == null) return Json(new { success = false });
+
+            _db.Set<ProductSize>().Remove(size);
+            _db.SaveChanges();
+            return Json(new { success = true });
+        }
     }
 }
