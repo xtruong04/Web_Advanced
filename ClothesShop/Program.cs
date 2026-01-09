@@ -44,6 +44,12 @@ builder.Services.AddAuthentication()
         IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
         options.ClientId = googleAuthNSection["ClientId"];
         options.ClientSecret = googleAuthNSection["ClientSecret"];
+        // Thêm dòng này để luôn hiện bảng chọn tài khoản
+        options.Events.OnRedirectToAuthorizationEndpoint = context =>
+        {
+            context.Response.Redirect(context.RedirectUri + "&prompt=select_account");
+            return Task.CompletedTask;
+        };
     });
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 var app = builder.Build();
