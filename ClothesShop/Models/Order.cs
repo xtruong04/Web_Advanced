@@ -20,6 +20,7 @@
         }
         #endregion
         public int Id { get; set; }
+        public string? MomoTransId { get; set; } // Lưu mã giao dịch của MoMo (VD: 2304912349)
         public required string UserId { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public decimal TotalAmount { get; set; }

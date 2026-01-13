@@ -91,7 +91,7 @@
                                                 <span class="badge bg-secondary">@(string.IsNullOrEmpty(item.Size) ? "N/A" : item.Size)</span>
                                             </td>
                                             <td class="text-center">@item.Quantity</td>
-                                            <td class="text-end">$@item.PriceAtPurchase.ToString("N2")</td>
+                                            <td class="text-end">@item.PriceAtPurchase.ToString("#,##0") VNĐ</td>
                                             <td class="text-end fw-bold">$@((item.Quantity * item.PriceAtPurchase).ToString("N2"))</td>
                                         </tr>
                                     }

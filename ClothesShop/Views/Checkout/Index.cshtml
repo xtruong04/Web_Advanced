@@ -1,6 +1,6 @@
 ﻿@model ClothesShop.Models.CheckoutViewModel
 
-<form asp-action="PlaceOrder" method="post" id="checkoutForm">
+<form asp-action="PlaceOrder" asp-controller="Checkout" method="post" id="checkoutForm">
     @Html.AntiForgeryToken()
 
     <div class="container-fluid">
@@ -27,6 +27,7 @@
                             <label>Phone</label>
                             <input asp-for="User.PhoneNumber" class="form-control" readonly />
                         </div>
+
                         <input type="hidden" asp-for="Address.Street" />
                         <input type="hidden" asp-for="Address.Ward" />
                         <input type="hidden" asp-for="Address.District" />
@@ -48,86 +49,39 @@
                         {
                             <div class="d-flex justify-content-between mb-2">
                                 <p>@item.ProductName x @item.Quantity (Size: @item.Size)</p>
-                                <p>$@(item.Price * item.Quantity)</p>
+                                <p>@(item.Price * item.Quantity)</p>
                             </div>
                         }
                     </div>
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5>$@Model.Cart.Total</h5>
+                            <h5>@Model.Cart.Total.ToString("#,##0")</h5>
                         </div>
                     </div>
 
                     <h5 class="fw-bold mb-3 mt-4">Phương thức thanh toán</h5>
+
                     <div class="form-check border p-3 rounded mb-2">
-                        <input class="form-check-input" type="radio" name="payMethod" id="cod" value="COD" checked>
-                        <label class="form-check-label w-100" for="cod">Thanh toán COD</label>
-                    </div>
-                    <div class="form-check border p-3 rounded mb-2">
-                        <input class="form-check-input" type="radio" name="payMethod" id="VNPAY" value="VNPAY">
-                        <label class="form-check-label w-100" for="VNPAY">Ví VNPAY (Mã QR)</label>
-                    </div>
-                    <div class="form-check border p-3 rounded mb-3">
-                        <input class="form-check-input" type="radio" name="payMethod" id="MOMO" value="MOMO">
-                        <label class="form-check-label w-100" for="MOMO">Ví MoMo (Mã QR)</label>
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
+                        <label class="form-check-label w-100" for="cod">Thanh toán khi nhận hàng (COD)</label>
                     </div>
 
-                    <button type="button" onclick="confirmOrder()" class="btn btn-primary w-100 py-3 fw-bold">XÁC NHẬN ĐẶT HÀNG</button>
+                    <div class="form-check border p-3 rounded mb-2">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="VNPAY" value="VNPAY">
+                        <label class="form-check-label w-100" for="VNPAY">Ví VNPAY</label>
+                    </div>
+
+                    <div class="form-check border p-3 rounded mb-3">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="MOMO" value="MOMO">
+                        <label class="form-check-label w-100" for="MOMO">Ví MoMo</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
+                        XÁC NHẬN ĐẶT HÀNG
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </form>
-
-<div class="modal fade" id="qrModal" data-bs-backdrop="static" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-4">
-            <h4 class="fw-bold">Quét mã thanh toán</h4>
-            <div class="my-3"><img id="qrImg" src="" style="width: 250px; border: 1px solid #ddd;" /></div>
-            <div class="alert alert-warning">Vui lòng quét mã qua ứng dụng ngân hàng/ví điện tử.</div>
-            <button type="button" class="btn btn-success w-100" onclick="finalSubmit()">Tôi đã thanh toán xong</button>
-            <button type="button" class="btn btn-link btn-sm mt-2" data-bs-dismiss="modal">Hủy bỏ</button>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <script>
-        var selectedMethod = "COD";
-
-        function confirmOrder() {
-            selectedMethod = $("input[name='payMethod']:checked").val();
-
-            if (selectedMethod === "COD") {
-                finalSubmit();
-            } else {
-                // Hiển thị trạng thái đang tải
-                toastr.info("Đang tạo mã QR...");
-
-                $.post('/Checkout/GetPaymentQR', { method: selectedMethod, amount: "@Model.Cart.Total" }, function(res) {
-                    if (res.success) {
-                        $("#qrImg").attr("src", res.qrCode);
-                        $("#qrModal").modal("show");
-                    } else {
-                        toastr.error("Không thể tạo mã QR. Vui lòng thử lại!");
-                    }
-                });
-            }
-        }
-
-               function finalSubmit() {
-            // 1. Xóa các input ẩn trùng tên trước đó (nếu khách lỡ nhấn nhiều lần)
-            $("input[name='paymentMethod']").remove();
-
-            // 2. Thêm input ẩn để gửi phương thức thanh toán về PlaceOrder
-            $("#checkoutForm").append('<input type="hidden" name="paymentMethod" value="' + selectedMethod + '" />');
-
-            // 3. Hiệu ứng chờ để khách không nhấn lung tung trong lúc chờ Server xử lý
-            toastr.success("Đang xác thực giao dịch, vui lòng chờ...");
-
-            // 4. Submit form
-            $("#checkoutForm").submit();
-        }
-    </script>
-}
