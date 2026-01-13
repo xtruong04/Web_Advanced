@@ -20,7 +20,7 @@
                 <div class="card card-stats card-round">
                     <div class="card-body">
                         <p class="card-category">Total Sales</p>
-                        <h4 class="card-title">$@Model.TotalSales</h4>
+                        <h4 class="card-title">@Model.TotalSales.ToString("#,##0") VNĐ</h4>
                     </div>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                                                         <img src="~/Content/products/@item.Product.ProductImages" width="50" />
                                                     </td> *@
                                                     <td>@item.Quantity</td>
-                                                    <td>$@item.PriceAtPurchase</td>
+                                                    <td>@item.PriceAtPurchase.ToString("#,##0") VNĐ</td>
                                                     <td>
                                                         <span class="badge @(order.orderStatus == ClothesShop.Models.Order.OrderStatus.Delivered ? "badge-success" : "badge-warning")">
                                                             @order.orderStatus

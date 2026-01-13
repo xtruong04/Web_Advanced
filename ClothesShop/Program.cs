@@ -52,6 +52,8 @@ builder.Services.AddAuthentication()
         };
     });
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddHttpClient<IMomoService, MomoService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

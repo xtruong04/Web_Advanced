@@ -30,7 +30,7 @@
                         <tr>
                             <td>@item.Name</td>
                             <td>@item.CategoryName</td>
-                            <td>@item.Price?.ToString("C0")</td>
+                            <td>@item.Price?.ToString("#,##0") VNĐ</td>
                             <td>@(item.ProductImageIds?.Count ?? 0)</td>
 
                             <td class="text-end">

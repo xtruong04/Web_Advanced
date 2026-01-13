@@ -9,6 +9,7 @@ using ClothesShop.Data;
 using ClothesShop.Models;
 using ClothesShop.Areas.Admin.Models.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using ClothesShop.Services; // 👉 Nhớ thêm namespace này
 
 namespace ClothesShop.Areas.Admin.Controllers
 {
@@ -17,10 +18,12 @@ namespace ClothesShop.Areas.Admin.Controllers
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMomoService _momoService; // 👉 1. Khai báo service
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, IMomoService momoService)
         {
             _context = context;
+            _momoService = momoService;
         }
 
         // GET: Admin/Orders
@@ -110,9 +113,11 @@ namespace ClothesShop.Areas.Admin.Controllers
         // POST: Admin/Orders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Admin/Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,OrderDate,TotalAmount,FullName,PhoneNumber,Street,Ward,District,City,orderStatus,paymentStatus")] Order order)
+        // 👉 Thêm MomoTransId vào Bind để tránh bị mất dữ liệu khi update
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,OrderDate,TotalAmount,FullName,PhoneNumber,Street,Ward,District,City,orderStatus,paymentStatus,MomoTransId")] Order order)
         {
             if (id != order.Id)
             {
@@ -123,6 +128,41 @@ namespace ClothesShop.Areas.Admin.Controllers
             {
                 try
                 {
+                    // 1. Lấy thông tin đơn hàng gốc từ Database (để lấy TransId cũ và kiểm tra trạng thái cũ)
+                    // Dùng AsNoTracking để không bị xung đột khi Update
+                    var originalOrder = await _context.Orders.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+                    if (originalOrder == null) return NotFound();
+
+                    // 👉 LOGIC HOÀN TIỀN MOMO
+                    // Kiểm tra: Nếu Admin đang đổi trạng thái thành "Refunded" (Hoàn tiền/Hủy)
+                    // (Giả sử trong Enum OrderStatus bạn có trạng thái tên là Cancelled hoặc Refunded)
+                    if (order.orderStatus == Order.OrderStatus.Cancelled || order.paymentStatus == Order.PaymentStatus.Refunded) // ⚠️ Thay 'Cancelled' bằng Enum 'Refunded' của bạn nếu có
+                    {
+                        // Chỉ hoàn tiền nếu đơn hàng ĐÃ THANH TOÁN (Paid) và có MomoTransId
+                        if (originalOrder.paymentStatus == Order.PaymentStatus.Paid && !string.IsNullOrEmpty(originalOrder.MomoTransId))
+                        {
+                            // Gọi Service hoàn tiền
+                            var refundResponse = await _momoService.RefundAsync(originalOrder);
+
+                            if (refundResponse.resultCode == 0) // Thành công
+                            {
+                                order.paymentStatus = Order.PaymentStatus.Refunded; // Cập nhật luôn trạng thái thanh toán
+                                TempData["Success"] = "Đã hoàn tiền MoMo thành công!";
+                            }
+                            else // Thất bại
+                            {
+                                // Show lỗi ra màn hình và KHÔNG lưu database
+                                ModelState.AddModelError("", "Lỗi hoàn tiền MoMo: " + refundResponse.message);
+                                return View(order);
+                            }
+                        }
+                    }
+
+                    // 2. Nếu không phải hoàn tiền, hoặc hoàn tiền thành công thì lưu dữ liệu
+                    // Đảm bảo MomoTransId không bị mất (do form Edit có thể không gửi lên)
+                    order.MomoTransId = originalOrder.MomoTransId;
+
                     _context.Update(order);
                     await _context.SaveChangesAsync();
                 }

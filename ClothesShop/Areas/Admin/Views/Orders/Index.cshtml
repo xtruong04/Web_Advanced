@@ -33,7 +33,7 @@
                                     <small class="text-muted">@item.PhoneNumber</small>
                                 </td>
                                 <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td class="fw-bold text-danger">@item.TotalAmount.ToString("C0")</td>
+                                <td class="fw-bold text-danger">@item.TotalAmount.ToString("#,##0") VNĐ</td>
                                 <td>
                                     <span class="badge @(item.OrderStatus == "Cancelled" ? "bg-danger" : "bg-info")">
                                         @item.OrderStatus
@@ -62,3 +62,33 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <script type="text/javascript">
+        // Cấu hình Toastr (tùy chọn)
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right", // Vị trí hiện: Trên cùng bên phải
+            "timeOut": "5000", // Tự tắt sau 5 giây
+        };
+
+        // Kiểm tra xem có thông báo thành công không
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                    toastr.success('@TempData["Success"]');
+            </text>
+        }
+
+        // Kiểm tra xem có thông báo lỗi không
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                    toastr.error('@TempData["Error"]');
+            </text>
+        }
+    </script>
+}
