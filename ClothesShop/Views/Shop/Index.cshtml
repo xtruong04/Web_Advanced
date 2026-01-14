@@ -4,13 +4,43 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    /* Đảm bảo khung chứa ảnh có kích thước cố định */
+    .product-img {
+        height: 350px; /* Bạn có thể điều chỉnh chiều cao này cho phù hợp */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa; /* Màu nền cho những ảnh nhỏ không lấp đầy khung */
+        overflow: hidden;
+    }
+
+        /* Ép ảnh lấp đầy khung mà không bị méo (giống object-fit trong điện thoại) */
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Quan trọng: Giữ tỷ lệ ảnh và cắt bớt phần thừa */
+            object-position: center;
+        }
+
+    /* Đồng nhất độ cao cho phần thân thẻ sản phẩm */
+    .product-item {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+        .product-item .text-center {
+            flex-grow: 1; /* Đẩy các phần nội dung sao cho các nút hành động luôn thẳng hàng */
+        }
+</style>
 <!-- Breadcrumb Start -->
 <div class="container-fluid">
     <div class="row px-xl-5">
         <div class="col-12">
             <nav class="breadcrumb bg-light mb-30">
-                <a class="breadcrumb-item text-dark" href="#">Home</a>
-                <a class="breadcrumb-item text-dark" href="#">Shop</a>
+                <a class="breadcrumb-item text-dark text-decoration-none" asp-action="Index" asp-controller="Home">Home</a>
+                <a class="breadcrumb-item text-dark text-decoration-none" asp-action="Index" asp-controller="Shop">Shop</a>
                 <span class="breadcrumb-item active">Shop List</span>
             </nav>
         </div>
@@ -146,10 +176,10 @@
                     var image = item.ProductImages?.FirstOrDefault()?.ImageUrl
                     ?? "/Content/clientpage/assets/img/no-image.png";
 
-                    <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                    <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
                         <div class="product-item bg-light mb-4">
                             <div class="product-img position-relative overflow-hidden">
-                                <img class="img-fluid w-100" 
+                                <img class="img-fluid " 
                                      src="@image")"
                                      alt="@item.Name">
                                 <div class="product-action">

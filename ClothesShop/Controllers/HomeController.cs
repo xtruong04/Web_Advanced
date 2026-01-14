@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using ClothesShop.Data;
 using ClothesShop.Models;
@@ -19,7 +19,9 @@ namespace ClothesShop.Controllers
         {
             try
             {
-                var categories = _context.Categories.ToList();
+                var categories = _context.Categories
+                    .Include(c => c.Products) // Thêm dòng này để nạp danh sách sản phẩm
+                    .ToList();
 
                 var allProducts = _context.Product
                     .Include(p => p.ProductImages)

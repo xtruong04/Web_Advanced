@@ -3,7 +3,33 @@
 @{
     ViewBag.Title = "Details";
 }
+<style>
+    /* Cố định kích thước khung Carousel */
+    #product-carousel .carousel-inner {
+        height: 500px; /* Chiều cao cố định cho ảnh chi tiết */
+        background-color: #f8f9fa;
+    }
 
+    #product-carousel .carousel-item {
+        height: 100%;
+    }
+
+    /* Đồng nhất ảnh: luôn lấp đầy khung mà không bị méo */
+    #product-carousel .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Dùng 'contain' cho trang chi tiết để khách nhìn rõ toàn bộ form dáng sản phẩm */
+        background-color: #f8f9fa;
+    }
+
+    /* Nếu bạn muốn ảnh lấp đầy hoàn toàn (có thể mất 1 phần rìa) thì dùng: object-fit: cover; */
+
+    /* Căn chỉnh khoảng cách cho phần mô tả */
+    .product-description-text {
+        min-height: 100px;
+        line-height: 1.6;
+    }
+</style>
 <!-- Breadcrumb Start -->
 <div class="container-fluid">
     <div class="row px-xl-5">
